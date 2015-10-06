@@ -38,6 +38,16 @@
 
 - (void)buildView:(id)sender
 {
+    self.navigationController.navigationBar.topItem.title = @"宝宝该复习啦";
+    self.navigationController.navigationBar.tintColor = [UIColor whiteColor];
+    
+    UIBarButtonItem *settingItem = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"list_setting"] style:UIBarButtonItemStyleBordered target:self action:@selector(setting:)];
+    [self.navigationController.navigationBar.topItem setLeftBarButtonItem:settingItem];
+    
+    UIBarButtonItem *composeItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCompose target:self action:@selector(addItem:)];
+    [self.navigationController.navigationBar.topItem setRightBarButtonItem:composeItem];
+
+    
     mainTableView = [[UITableView alloc]initWithFrame:CGRectMake(200, 64, FULLSCREEN_WIDTH, FULLSCREEN_HEIGHT - 64)];
     mainTableView.delegate = self;
     mainTableView.dataSource = self;

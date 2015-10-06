@@ -8,6 +8,8 @@
 
 #import "AppDelegate.h"
 #import "MainViewController.h"
+#import "reminderNavigationBar.h"
+#import "ReminderManager.h"
 
 @interface AppDelegate ()
 
@@ -20,12 +22,11 @@
     // Override point for customization after application launch.
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen]bounds]];
     MainViewController *mainVC = [[MainViewController alloc]initWithNibName:nil bundle:nil];
-    UINavigationController *navVC = [[UINavigationController alloc] initWithRootViewController:mainVC];
+    UINavigationController *navVC = [[UINavigationController alloc] initWithNavigationBarClass:[reminderNavigationBar class] toolbarClass:[UIToolbar class]];
+    [navVC pushViewController:mainVC animated:NO];
+    navVC.navigationBar.barTintColor = COLOR_AG;
+    navVC.navigationBar.titleTextAttributes = [NSDictionary dictionaryWithObject:[UIColor whiteColor] forKey:NSForegroundColorAttributeName];
     self.window.rootViewController = navVC;
-    navVC.navigationBar.topItem.title = @"hello";
-    navVC.navigationBar.barTintColor = [UIColor blackColor];
-    navVC.navigationBar.tintColor = [UIColor whiteColor];
-//    navVC.navigationBarHidden = YES;
     [self.window makeKeyAndVisible];
     return YES;
 }
