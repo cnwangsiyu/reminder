@@ -11,15 +11,12 @@
 #import "EditViewController.h"
 #import "SettingViewController.h"
 
-@interface MainViewController ()
+@interface MainViewController ()<UINavigationControllerDelegate>
 {
     UIButton *seeReminderViewButton;
     UIView *seeReminderViewContainer;
     UITableView *mainTableView;
 }
-
-@property (nonatomic, weak) IBOutlet UINavigationBar *navBar;
-
 
 @end
 
@@ -34,21 +31,22 @@
     [ReminderManager setMainTableView:mainTableView];
     
     [self refreshRemindCount:nil];
+    
+    self.navigationController.delegate = self;
 }
 
 - (void)buildView:(id)sender
 {
-    self.navigationController.navigationBar.topItem.title = @"宝宝该复习啦";
-    self.navigationController.navigationBar.tintColor = [UIColor whiteColor];
+    self.title = @"宝宝该复习啦";
     
     UIBarButtonItem *settingItem = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"list_setting"] style:UIBarButtonItemStyleBordered target:self action:@selector(setting:)];
-    [self.navigationController.navigationBar.topItem setLeftBarButtonItem:settingItem];
+    [self.navigationItem setLeftBarButtonItem:settingItem];
     
     UIBarButtonItem *composeItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCompose target:self action:@selector(addItem:)];
-    [self.navigationController.navigationBar.topItem setRightBarButtonItem:composeItem];
+    [self.navigationItem setRightBarButtonItem:composeItem];
 
     
-    mainTableView = [[UITableView alloc]initWithFrame:CGRectMake(200, 64, FULLSCREEN_WIDTH, FULLSCREEN_HEIGHT - 64)];
+    mainTableView = [[UITableView alloc]initWithFrame:CGRectMake(200, 0, FULLSCREEN_WIDTH, FULLSCREEN_HEIGHT)];
     mainTableView.delegate = self;
     mainTableView.dataSource = self;
     [self.view addSubview:mainTableView];
@@ -76,13 +74,13 @@
         [seeReminderViewButton
          setTitle:[NSString stringWithFormat:@"有%lu个事项需要处理",(unsigned long)[ReminderManager getItemsNeedBeenRemindCount]]
          forState:UIControlStateNormal];
-        mainTableView.frame = CGRectMake(0, 64, FULLSCREEN_WIDTH, FULLSCREEN_HEIGHT - 64 - 40);
+        mainTableView.frame = CGRectMake(0, 0, FULLSCREEN_WIDTH, FULLSCREEN_HEIGHT - 40);
     }
     else
     {
         seeReminderViewButton.hidden = YES;
         
-        mainTableView.frame = CGRectMake(0, 64, FULLSCREEN_WIDTH, FULLSCREEN_HEIGHT - 64);
+        mainTableView.frame = CGRectMake(0, 0, FULLSCREEN_WIDTH, FULLSCREEN_HEIGHT);
     }
 }
 
@@ -117,14 +115,14 @@
 
 #pragma mark - button events
 
-- (IBAction)addItem:(id)sender
+- (void)addItem:(id)sender
 {
     EditViewController *editVC = [[EditViewController alloc] initWithNibName:nil bundle:nil editViewControllerType:EditViewControllerTypeAdd];
     
     [self presentViewController:editVC animated:YES completion:nil];
 }
 
-- (IBAction)setting:(id)sender
+- (void)setting:(id)sender
 {
     SettingViewController *settingVC = [[SettingViewController alloc] initWithNibName:nil bundle:nil];
     [self.navigationController pushViewController:settingVC animated:YES];
@@ -135,6 +133,17 @@
     ReminderViewController *reminderVC = [[ReminderViewController alloc] initWithNibName:nil bundle:nil];
     reminderVC.type = reminderViewTypeRemind;
     [self.navigationController pushViewController:reminderVC animated:YES];
+}
+
+- (void)navigationController:(UINavigationController *)navigationController willShowViewController:(UIViewController *)viewController animated:(BOOL)animated
+{
+    if ([viewController isKindOfClass:[MainViewController class]]) {
+        [self refreshRemindCount:nil];
+        [mainTableView reloadData];
+    }
+    if ([viewController isKindOfClass:[ReminderViewController class]]) {
+        [(ReminderViewController *)viewController refreshCurrentDisplay:nil];
+    }
 }
 
 @end

@@ -25,6 +25,7 @@
     UINavigationController *navVC = [[UINavigationController alloc] initWithNavigationBarClass:[reminderNavigationBar class] toolbarClass:[UIToolbar class]];
     [navVC pushViewController:mainVC animated:NO];
     navVC.navigationBar.barTintColor = COLOR_AG;
+    navVC.navigationBar.tintColor = [UIColor whiteColor];
     navVC.navigationBar.titleTextAttributes = [NSDictionary dictionaryWithObject:[UIColor whiteColor] forKey:NSForegroundColorAttributeName];
     self.window.rootViewController = navVC;
     [self.window makeKeyAndVisible];

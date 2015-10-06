@@ -30,6 +30,8 @@
 
 @implementation ReminderViewController
 
+@synthesize type;
+
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view from its nib.
@@ -44,8 +46,18 @@
 - (void)buildViews:(id)sender
 {
     self.view.backgroundColor = COLOR_AB;
+    if (type == reminderViewTypeRemind)
+    {
+        self.title = @"提醒";
+    }
+    else
+    {
+        self.title = @"查看事项";
+    }
+    UIBarButtonItem *editItem = [[UIBarButtonItem alloc] initWithTitle:@"编辑" style:UIBarButtonItemStyleDone target:self action:@selector(edit:)];
+    [self.navigationItem setRightBarButtonItem:editItem];
     
-    scrollView = [[UIScrollView alloc] initWithFrame:CGRectMake(0, 64, FULLSCREEN_WIDTH, FULLSCREEN_HEIGHT)];
+    scrollView = [[UIScrollView alloc] initWithFrame:CGRectMake(0, 0, FULLSCREEN_WIDTH, FULLSCREEN_HEIGHT)];
     scrollView.contentSize = CGSizeMake(FULLSCREEN_WIDTH, FULLSCREEN_HEIGHT);
     [self.view addSubview:scrollView];
     
@@ -177,16 +189,10 @@
 }
 
 
-- (IBAction)edit:(id)sender
+- (void)edit:(id)sender
 {
     EditViewController *editVC = [[EditViewController alloc] initWithNibName:nil bundle:nil editViewControllerType:EditViewControllerTypeEdit];
     [self.navigationController pushViewController:editVC animated:YES];
-}
-
-- (IBAction)back:(id)sender
-{
-    [self.navigationController popViewControllerAnimated:YES];
-    [(MainViewController *)[self.navigationController.viewControllers objectAtIndex:0] refreshRemindCount:nil];
 }
 
 - (IBAction)leftButtonEvent:(id)sender
