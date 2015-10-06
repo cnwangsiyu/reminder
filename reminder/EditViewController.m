@@ -3,7 +3,7 @@
 //  reminder
 //
 //  Created by WangSiyu on 15/10/1.
-//  Copyright © 2015年 SeenVoice_Tech. All rights reserved.
+//  Copyright © 2015年 WangSiyu. All rights reserved.
 //
 
 #import "EditViewController.h"
@@ -23,6 +23,7 @@
     UITextField *titleText;
     UITextView *detailText;
     UIButton *deleteButton;
+    float top;
     enum EditViewControllerType type;
 }
 
@@ -56,9 +57,8 @@
         
         UIImageView *saveButtonImage = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"save"]];
         saveButtonImage.frame = CGRectMake(0, 0, 24, 24);
+        [saveButtonImage addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(save:)]];
         UIBarButtonItem *saveItem = [[UIBarButtonItem alloc] initWithCustomView:saveButtonImage];
-        saveItem.target = self;
-        saveItem.action = @selector(save:);
         [self.navigationItem setRightBarButtonItem:saveItem];
     }
     else
@@ -66,9 +66,9 @@
         self.navigationController.navigationBarHidden = YES;
         AddModeNavBar.barTintColor = COLOR_AG;
     }
-
-    scrollView = [[UIScrollView alloc] initWithFrame:CGRectMake(0, 64, FULLSCREEN_WIDTH, FULLSCREEN_HEIGHT)];
-    scrollView.contentSize = CGSizeMake(FULLSCREEN_WIDTH, FULLSCREEN_HEIGHT);
+    
+    scrollView = [[UIScrollView alloc] initWithFrame:CGRectMake(0, 64, FULLSCREEN_WIDTH, FULLSCREEN_HEIGHT - 64)];
+    scrollView.contentSize = CGSizeMake(FULLSCREEN_WIDTH, FULLSCREEN_HEIGHT - 64);
     
     scrollView.userInteractionEnabled = YES;
     [scrollView addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(closeKeyBoard:)]];
@@ -109,7 +109,7 @@
     [detailText addSubview:placeHolder];
     
     CGRect frame = detailText.frame;
-    float top = frame.origin.y + frame.size.height + 10;
+    top = frame.origin.y + frame.size.height + 10;
     imageContainer = [[UIView alloc] initWithFrame:CGRectMake(frame.origin.x, top, frame.size.width, 120)];
     imageContainer.backgroundColor = [UIColor clearColor];
     [scrollView addSubview:imageContainer];
@@ -121,10 +121,20 @@
     addImageButton.tag = 99999;
     [imageContainer addSubview:addImageButton];
     
-    deleteButton = [[UIButton alloc] initWithFrame:CGRectMake(frame.origin.x, top + 80, FULLSCREEN_WIDTH - 2*frame.origin.x, 40)];
-    [deleteButton setTitle:@"删  除" forState:UIControlStateNormal];
-    [deleteButton setTitleColor:[UIColor redColor] forState:UIControlStateNormal];
-    deleteButton.backgroundColor = COLOR_AC;
+    [self buildImageView:nil];
+    
+    if (type == EditViewControllerTypeEdit) {
+        deleteButton = [[UIButton alloc] initWithFrame:CGRectMake(frame.origin.x, top + 80, FULLSCREEN_WIDTH - 2*frame.origin.x, 40)];
+        deleteButton.layer.borderColor = COLOR_AD.CGColor;
+        deleteButton.layer.borderWidth = 1;
+        deleteButton.layer.cornerRadius = 5;
+        deleteButton.layer.masksToBounds = YES;
+        [deleteButton setTitle:@"删  除" forState:UIControlStateNormal];
+        [deleteButton setTitleColor:[UIColor redColor] forState:UIControlStateNormal];
+        deleteButton.backgroundColor = COLOR_AC;
+        [deleteButton addTarget:self action:@selector(deleteItem:) forControlEvents:UIControlEventTouchUpInside];
+        [scrollView addSubview:deleteButton];
+    }
 }
 
 - (void)textViewDidChange:(UITextView *)textView
@@ -217,10 +227,10 @@
     
     [selectedItem.images addObject:image];
     
-    [self buildImageView];
+    [self buildImageView:nil];
 }
 
-- (void)buildImageView
+- (void)buildImageView:(id)sender
 {
     int imageTag = IMAGE_TAG;
     
@@ -234,13 +244,11 @@
     for (UIImage *image in selectedItem.images) {
         
         UIImageView *imageView = [[UIImageView alloc]
-                                 initWithFrame:CGRectMake(70 * (imageTag - IMAGE_TAG) + 10,
+                                  initWithFrame:CGRectMake(70 * ((imageTag - IMAGE_TAG) % 4) + 10,
                                                            70 * ((imageTag - IMAGE_TAG) / 4),
                                                            60, 60)];
         
         imageView.image = image;
-        
-        CGRectMake(70 * (imageTag - IMAGE_TAG) + 10, 70 * ((imageTag - IMAGE_TAG) / 4), 60, 60);
         
         imageView.tag = imageTag;
         
@@ -253,10 +261,12 @@
         [imageContainer addSubview:imageView];
         
     }
-    
+    scrollView.contentSize = CGSizeMake(FULLSCREEN_WIDTH, deleteButton.frame.origin.y + deleteButton.frame.size.height + 50);
     addImageButton.frame =
-    CGRectMake(70 * (imageTag - IMAGE_TAG) + 10, 70 * ((imageTag - IMAGE_TAG) / 4), 60, 60);
-;
+    CGRectMake(70 * ((imageTag - IMAGE_TAG) % 4) + 10, 70 * ((imageTag - IMAGE_TAG) / 4), 60, 60);
+    if (type == EditViewControllerTypeEdit) {
+        deleteButton.frame = CGRectMake(deleteButton.frame.origin.x, top + 80 + 70 * ((imageTag - IMAGE_TAG) / 4), deleteButton.frame.size.width, deleteButton.frame.size.height);
+    }
 }
 
 - (void)openImageScaleInView:(UITapGestureRecognizer *)tapGesture
@@ -319,10 +329,13 @@
 
 - (IBAction)save:(id)sender
 {
-
+    
     selectedItem.title = titleText.text;
     selectedItem.detail = detailText.text;
-    BOOL isInvalid = !selectedItem.title.length && !selectedItem.detail.length;
+    if (!selectedItem.title.length) {
+        selectedItem.title = @"未命名事项";
+    }
+    BOOL isInvalid = !selectedItem.title.length && !selectedItem.detail.length && selectedItem.images.count == 0;
     if (type == EditViewControllerTypeEdit)
     {
         if (isInvalid) {
@@ -370,7 +383,7 @@
     [self dismissViewControllerAnimated:YES completion:nil];
 }
 
-- (IBAction)deleteItem:(id)sender
+- (void)deleteItem:(id)sender
 {
     if ([ReminderManager getCurrentItemIndex] >= 0){
         [ReminderManager removeItemAtIndex:[ReminderManager getCurrentItemIndex]];

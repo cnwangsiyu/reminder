@@ -3,7 +3,7 @@
 //  reminder
 //
 //  Created by WangSiyu on 15/10/5.
-//  Copyright © 2015年 SeenVoice_Tech. All rights reserved.
+//  Copyright © 2015年 WangSiyu. All rights reserved.
 //
 
 #ifndef CommonResources_h

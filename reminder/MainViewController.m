@@ -3,7 +3,7 @@
 //  reminder
 //
 //  Created by WangSiyu on 15/10/1.
-//  Copyright © 2015年 SeenVoice_Tech. All rights reserved.
+//  Copyright © 2015年 WangSiyu. All rights reserved.
 //
 
 #import "MainViewController.h"
@@ -125,7 +125,7 @@
 - (void)setting:(id)sender
 {
     SettingViewController *settingVC = [[SettingViewController alloc] initWithNibName:nil bundle:nil];
-    [self.navigationController pushViewController:settingVC animated:YES];
+    [self.navigationController presentViewController:settingVC animated:YES completion:nil];
 }
 
 - (void )seeReminderView:(id)sender

@@ -3,7 +3,7 @@
 //  reminder
 //
 //  Created by WangSiyu on 15/10/2.
-//  Copyright © 2015年 SeenVoice_Tech. All rights reserved.
+//  Copyright © 2015年 WangSiyu. All rights reserved.
 //
 
 #import "ReminderViewController.h"

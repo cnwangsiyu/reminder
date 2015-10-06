@@ -7,6 +7,7 @@
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="SettingViewController">
             <connections>
+                <outlet property="navBar" destination="lNN-sg-peE" id="rCk-7X-VXY"/>
                 <outlet property="numberText" destination="HNS-TP-kg9" id="Yf0-eW-N1f"/>
                 <outlet property="view" destination="i5M-Pr-FkT" id="sfx-zR-JGt"/>
             </connections>
@@ -46,13 +47,13 @@
                     <items>
                         <navigationItem title="设置" id="Zjz-AI-NaB">
                             <barButtonItem key="leftBarButtonItem" id="AlW-8H-zfO">
-                                <button key="customView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="3ZG-Wf-03f">
-                                    <rect key="frame" x="16" y="27" width="30" height="30"/>
+                                <button key="customView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="3ZG-Wf-03f">
+                                    <rect key="frame" x="16" y="31" width="18" height="22"/>
                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                     <animations/>
-                                    <state key="normal" title="返回"/>
+                                    <state key="normal" image="common_close.png"/>
                                     <connections>
-                                        <action selector="cancel:" destination="-1" eventType="touchUpInside" id="vrR-aH-xc9"/>
+                                        <action selector="close:" destination="-1" eventType="touchUpInside" id="rAH-gM-Z52"/>
                                     </connections>
                                 </button>
                             </barButtonItem>
@@ -87,6 +88,7 @@
         </view>
     </objects>
     <resources>
+        <image name="common_close.png" width="18" height="18"/>
         <image name="save.png" width="48" height="48"/>
     </resources>
 </document>

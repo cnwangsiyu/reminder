@@ -3,7 +3,7 @@
 //  reminder
 //
 //  Created by WangSiyu on 15/10/1.
-//  Copyright © 2015年 SeenVoice_Tech. All rights reserved.
+//  Copyright © 2015年 WangSiyu. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
@@ -45,5 +45,10 @@
 
 + (void)setCurrentItemIndex:(NSUInteger)index;
 + (NSInteger)getCurrentItemIndex;
+
+NSString* pathInDocumentDirectory(NSString* name);
+bool createDirInDocument(NSString *dirName);
+bool saveImageToDirectory(NSString *directoryPath, UIImage *image, NSString *imageName, NSString *imageType);
+UIImage* loadImage(NSString *directoryPath, NSString *imageName);
 
 @end

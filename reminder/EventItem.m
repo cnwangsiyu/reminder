@@ -3,10 +3,11 @@
 //  reminder
 //
 //  Created by WangSiyu on 15/10/1.
-//  Copyright © 2015年 SeenVoice_Tech. All rights reserved.
+//  Copyright © 2015年 WangSiyu. All rights reserved.
 //
 
 #import "EventItem.h"
+#import "ReminderManager.h"
 
 @implementation EventItem
 
@@ -69,6 +70,23 @@
         }
         if (haveBeenDone_) {
             self.haveBeenDone = haveBeenDone_;
+        }
+        if (createTime_ && [createTime_ timeIntervalSince1970]) {
+            NSString *dir = pathInDocumentDirectory([NSString stringWithFormat:@"%f",[createTime_ timeIntervalSince1970]]);
+            bool finished = NO;
+            int index = 0;
+            while (!finished)
+            {
+                UIImage *image = loadImage(dir, [NSString stringWithFormat:@"%d.png",index]);
+                index ++;
+                if (image) {
+                    [self.images addObject:image];
+                }
+                else
+                {
+                    finished = YES;
+                }
+            }
         }
     }
     return self;

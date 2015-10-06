@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 46;
+	objectVersion = 47;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -839,7 +839,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastUpgradeCheck = 0700;
-				ORGANIZATIONNAME = SeenVoice_Tech;
+				ORGANIZATIONNAME = WangSiyu;
 				TargetAttributes = {
 					B674384C1BBD6B250005DD56 = {
 						CreatedOnToolsVersion = 7.0;
@@ -848,7 +848,7 @@
 				};
 			};
 			buildConfigurationList = B67438481BBD6B250005DD56 /* Build configuration list for PBXProject "reminder" */;
-			compatibilityVersion = "Xcode 3.2";
+			compatibilityVersion = "Xcode 6.3";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (

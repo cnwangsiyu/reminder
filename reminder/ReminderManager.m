@@ -3,7 +3,7 @@
 //  reminder
 //
 //  Created by WangSiyu on 15/10/1.
-//  Copyright © 2015年 SeenVoice_Tech. All rights reserved.
+//  Copyright © 2015年 WangSiyu. All rights reserved.
 //
 
 #import "ReminderManager.h"
@@ -17,19 +17,22 @@ static ReminderViewController *reminder;
 
 @implementation ReminderManager
 
-+ (void)addItem:(EventItem *)item;
++ (void)addItem:(EventItem *)newItem;
 {
     [ReminderManager initUserInfo];
-    [itemQueue addObject:item];
+    [itemQueue addObject:newItem];
     [ReminderManager saveUserInfoToDatabase];
+    [ReminderManager saveEventImagesToFile:newItem];
 }
 
 + (void)removeItemAtIndex:(NSUInteger)index
 {
     [ReminderManager initUserInfo];
     if (itemQueue.count > index) {
+        EventItem *item = [itemQueue objectAtIndex:index];
         [itemQueue removeObjectAtIndex:index];
         [ReminderManager saveUserInfoToDatabase];
+        [ReminderManager removeEventImagesInFile:item];
     }
 }
 
@@ -49,6 +52,7 @@ static ReminderViewController *reminder;
     if (itemQueue.count > index) {
         [itemQueue replaceObjectAtIndex:index withObject:newItem];
         [ReminderManager saveUserInfoToDatabase];
+        [ReminderManager saveEventImagesToFile:newItem];
     }
 }
 
@@ -172,6 +176,24 @@ static ReminderViewController *reminder;
     [[NSUserDefaults standardUserDefaults]setObject:dic forKey:@"userInfo"];
 }
 
++ (void)saveEventImagesToFile:(EventItem *)item
+{
+    NSString *dirName = [NSString stringWithFormat:@"%f",[item.createTime timeIntervalSince1970]];
+    deleteDirInDocument(dirName);
+    createDirInDocument(dirName);
+    int index = 0;
+    for (UIImage *image in item.images) {
+        saveImageToDirectory(pathInDocumentDirectory(dirName), image, [NSString stringWithFormat:@"%d", index], @"png");
+        index ++;
+    }
+}
+
++ (void)removeEventImagesInFile:(EventItem *)item
+{
+    NSString *dirName = [NSString stringWithFormat:@"%f",[item.createTime timeIntervalSince1970]];
+    deleteDirInDocument(dirName);
+}
+
 + (void)setMainTableView:(UITableView *)tableView
 {
     mainTableView = tableView;
@@ -200,6 +222,92 @@ static ReminderViewController *reminder;
 + (NSInteger)getCurrentItemIndex
 {
     return currentIndex;
+}
+NSString* pathInDocumentDirectory(NSString* name)
+{
+    NSArray *documentPaths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+    NSString *documentPath = [documentPaths objectAtIndex:0];
+    return [documentPath stringByAppendingPathComponent:name];
+}
+
+bool createDirInDocument(NSString *dirName)
+{
+    NSString *imageDir = pathInDocumentDirectory(dirName);
+    BOOL isDir = NO;
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    BOOL existed = [fileManager fileExistsAtPath:imageDir isDirectory:&isDir];
+    bool isCreated = false;
+    if ( !(isDir == YES && existed == YES) )
+    {
+        isCreated = [fileManager createDirectoryAtPath:imageDir withIntermediateDirectories:YES attributes:nil error:nil];
+        NSLog(@"directory created at path:%@",imageDir);
+    }
+    return isCreated;
+}
+
+// delete directory in the caches directory
+bool deleteDirInDocument(NSString *dirName)
+{
+    NSString *imageDir = pathInDocumentDirectory(dirName);
+    BOOL isDir = NO;
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    BOOL existed = [fileManager fileExistsAtPath:imageDir isDirectory:&isDir];
+    bool isDeleted = false;
+    if ( isDir == YES && existed == YES )
+    {
+        isDeleted = [fileManager removeItemAtPath:imageDir error:nil];
+        NSLog(@"directory deleted at path:%@",imageDir);
+    }
+    
+    return isDeleted;
+}
+
+// save Image to the caches directory
+bool saveImageToDirectory(NSString *directoryPath, UIImage *image, NSString *imageName, NSString *imageType)
+{
+    BOOL isDir = NO;
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    BOOL existed = [fileManager fileExistsAtPath:directoryPath isDirectory:&isDir];
+    bool isSaved = false;
+    if ( isDir == YES && existed == YES )
+    {
+        if ([[imageType lowercaseString] isEqualToString:@"png"])
+        {
+            isSaved = [UIImagePNGRepresentation(image) writeToFile:[directoryPath stringByAppendingPathComponent:[NSString stringWithFormat:@"%@.%@", imageName, @"png"]] options:NSAtomicWrite error:nil];
+        }
+        else if ([[imageType lowercaseString] isEqualToString:@"jpg"] || [[imageType lowercaseString] isEqualToString:@"jpeg"])
+        {
+            isSaved = [UIImageJPEGRepresentation(image, 1.0) writeToFile:[directoryPath stringByAppendingPathComponent:[NSString stringWithFormat:@"%@.%@", imageName, @"jpg"]] options:NSAtomicWrite error:nil];
+        }
+        else
+        {
+            NSLog(@"Image Save Failed\nExtension: (%@) is not recognized, use (PNG/JPG)", imageType);
+        }
+    }
+    return isSaved;
+}
+
+// load Image from caches dir to imageview
+UIImage* loadImage(NSString *directoryPath, NSString *imageName)
+{
+    BOOL isDir = NO;
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    BOOL dirExisted = [fileManager fileExistsAtPath:directoryPath isDirectory:&isDir];
+    if ( isDir == YES && dirExisted == YES )
+    {
+        NSString *imagePath = [directoryPath stringByAppendingPathComponent : imageName];
+        BOOL fileExisted = [fileManager fileExistsAtPath:imagePath];
+        if (!fileExisted) {
+            return nil;
+        }
+        NSData *imageData = [NSData dataWithContentsOfFile : imagePath];
+        UIImage *image = [UIImage imageWithData:imageData];
+        return image;
+    }
+    else
+    {
+        return nil;
+    }
 }
 
 @end

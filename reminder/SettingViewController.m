@@ -3,7 +3,7 @@
 //  reminder
 //
 //  Created by WangSiyu on 15/10/3.
-//  Copyright © 2015年 SeenVoice_Tech. All rights reserved.
+//  Copyright © 2015年 WangSiyu. All rights reserved.
 //
 
 #import "SettingViewController.h"
@@ -13,6 +13,7 @@
 @interface SettingViewController ()
 
 @property (nonatomic, weak) IBOutlet UITextField *numberText;
+@property (nonatomic, weak) IBOutlet UINavigationBar *navBar;
 
 @end
 
@@ -22,6 +23,7 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view from its nib.
     self.view.backgroundColor = COLOR_AB;
+    self.navBar.barTintColor = COLOR_AG;
     self.numberText.text = [NSString stringWithFormat:@"%lu", (unsigned long)[ReminderManager getItemCountToRemindPerDay]];
 }
 
@@ -30,9 +32,9 @@
     // Dispose of any resources that can be recreated.
 }
 
-- (IBAction)cancel:(id)sender
+- (IBAction)close:(id)sender
 {
-    [self.navigationController popViewControllerAnimated:YES];
+    [self dismissViewControllerAnimated:YES completion:nil];
 }
 
 - (IBAction)save:(id)sender
