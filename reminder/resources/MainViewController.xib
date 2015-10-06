@@ -7,7 +7,6 @@
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="MainViewController">
             <connections>
-                <outlet property="navBar" destination="awQ-Qt-IJe" id="q2C-av-yHI"/>
                 <outlet property="view" destination="i5M-Pr-FkT" id="sfx-zR-JGt"/>
             </connections>
         </placeholder>
@@ -15,51 +14,10 @@
         <view clearsContextBeforeDrawing="NO" contentMode="scaleToFill" id="i5M-Pr-FkT">
             <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-            <subviews>
-                <navigationBar contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="awQ-Qt-IJe">
-                    <rect key="frame" x="0.0" y="0.0" width="320" height="64"/>
-                    <animations/>
-                    <constraints>
-                        <constraint firstAttribute="height" constant="64" id="ncj-XL-FWn"/>
-                    </constraints>
-                    <color key="barTintColor" red="0.43529411759999997" green="0.4431372549" blue="0.47450980390000003" alpha="1" colorSpace="calibratedRGB"/>
-                    <textAttributes key="titleTextAttributes">
-                        <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                    </textAttributes>
-                    <items>
-                        <navigationItem title="宝宝该复习啦" id="vbI-k1-A59">
-                            <barButtonItem key="leftBarButtonItem" id="Hpz-09-MDt">
-                                <button key="customView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="KZf-nj-Odv">
-                                    <rect key="frame" x="16" y="30" width="24" height="24"/>
-                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                    <animations/>
-                                    <state key="normal" image="list_setting.png"/>
-                                    <connections>
-                                        <action selector="setting:" destination="-1" eventType="touchUpInside" id="DS7-DR-uMN"/>
-                                    </connections>
-                                </button>
-                            </barButtonItem>
-                            <barButtonItem key="rightBarButtonItem" systemItem="compose" id="d7z-T3-B62">
-                                <connections>
-                                    <action selector="addItem:" destination="-1" id="1Cw-Pc-0dB"/>
-                                </connections>
-                            </barButtonItem>
-                        </navigationItem>
-                    </items>
-                </navigationBar>
-            </subviews>
             <animations/>
             <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
             <color key="tintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-            <constraints>
-                <constraint firstAttribute="trailing" secondItem="awQ-Qt-IJe" secondAttribute="trailing" id="aOY-0M-WH4"/>
-                <constraint firstItem="awQ-Qt-IJe" firstAttribute="top" secondItem="i5M-Pr-FkT" secondAttribute="top" id="kH5-wk-bzN"/>
-                <constraint firstItem="awQ-Qt-IJe" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" id="tiV-ju-cJF"/>
-            </constraints>
             <simulatedScreenMetrics key="simulatedDestinationMetrics" type="retina4"/>
         </view>
     </objects>
-    <resources>
-        <image name="list_setting.png" width="24" height="24"/>
-    </resources>
 </document>

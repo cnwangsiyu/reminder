@@ -7,8 +7,8 @@
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="EditViewController">
             <connections>
-                <outlet property="cancelButton" destination="y6N-xv-JtA" id="mwe-eS-O11"/>
-                <outlet property="navItem" destination="CkI-2c-MBz" id="Lyv-L1-HKV"/>
+                <outlet property="AddModeNavBar" destination="OYd-Rb-SLN" id="r2K-2w-lkJ"/>
+                <outlet property="closeButton" destination="y6N-xv-JtA" id="KS6-8g-61T"/>
                 <outlet property="saveButton" destination="6sP-IS-svP" id="lze-Rh-4Vw"/>
                 <outlet property="view" destination="i5M-Pr-FkT" id="sfx-zR-JGt"/>
             </connections>
@@ -29,14 +29,15 @@
                         <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     </textAttributes>
                     <items>
-                        <navigationItem title="Title" id="CkI-2c-MBz">
+                        <navigationItem title="添加" id="CkI-2c-MBz">
                             <barButtonItem key="leftBarButtonItem" id="rNB-GH-qhZ">
-                                <button key="customView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="y6N-xv-JtA" userLabel="Cancel Button">
-                                    <rect key="frame" x="16" y="27" width="30" height="30"/>
+                                <button key="customView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="y6N-xv-JtA" userLabel="Close Button">
+                                    <rect key="frame" x="16" y="31" width="18" height="22"/>
                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                     <animations/>
+                                    <state key="normal" image="common_close.png"/>
                                     <connections>
-                                        <action selector="cancel:" destination="-1" eventType="touchUpInside" id="L3G-18-96h"/>
+                                        <action selector="close:" destination="-1" eventType="touchUpInside" id="jz3-0V-xtE"/>
                                     </connections>
                                 </button>
                             </barButtonItem>
@@ -67,6 +68,7 @@
         </view>
     </objects>
     <resources>
+        <image name="common_close.png" width="18" height="18"/>
         <image name="save.png" width="48" height="48"/>
     </resources>
 </document>

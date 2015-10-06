@@ -22,35 +22,51 @@
     UIScrollView *scrollView;
     UITextField *titleText;
     UITextView *detailText;
+    UIButton *deleteButton;
     enum EditViewControllerType type;
 }
 
-@property (nonatomic, weak) IBOutlet UIButton *deleteButton;
 @property (nonatomic, weak) IBOutlet UIButton *saveButton;
-@property (nonatomic, weak) IBOutlet UIButton *cancelButton;
-@property (nonatomic, weak) IBOutlet UINavigationItem *navItem;
+@property (nonatomic, weak) IBOutlet UIButton *closeButton;
+@property (nonatomic, weak) IBOutlet UINavigationBar *AddModeNavBar;
 
 @end
 
 @implementation EditViewController
 
-@synthesize deleteButton;
 @synthesize saveButton;
-@synthesize cancelButton;
-@synthesize navItem;
+@synthesize closeButton;
+@synthesize AddModeNavBar;
 
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view from its nib.
     
     [self buildViews:nil];
-    
 }
 
 - (void)buildViews:(id)sender
 {
     self.view.backgroundColor = COLOR_AB;
     
+    if (type == EditViewControllerTypeEdit)
+    {
+        self.title = @"编辑";
+        AddModeNavBar.hidden = YES;
+        
+        UIImageView *saveButtonImage = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"save"]];
+        saveButtonImage.frame = CGRectMake(0, 0, 24, 24);
+        UIBarButtonItem *saveItem = [[UIBarButtonItem alloc] initWithCustomView:saveButtonImage];
+        saveItem.target = self;
+        saveItem.action = @selector(save:);
+        [self.navigationItem setRightBarButtonItem:saveItem];
+    }
+    else
+    {
+        self.navigationController.navigationBarHidden = YES;
+        AddModeNavBar.barTintColor = COLOR_AG;
+    }
+
     scrollView = [[UIScrollView alloc] initWithFrame:CGRectMake(0, 64, FULLSCREEN_WIDTH, FULLSCREEN_HEIGHT)];
     scrollView.contentSize = CGSizeMake(FULLSCREEN_WIDTH, FULLSCREEN_HEIGHT);
     
@@ -92,26 +108,11 @@
     placeHolder.tag = 7658;
     [detailText addSubview:placeHolder];
     
-    deleteButton.layer.cornerRadius = 5;
-    deleteButton.backgroundColor = COLOR_AC;
-    
     CGRect frame = detailText.frame;
     float top = frame.origin.y + frame.size.height + 10;
     imageContainer = [[UIView alloc] initWithFrame:CGRectMake(frame.origin.x, top, frame.size.width, 120)];
     imageContainer.backgroundColor = [UIColor clearColor];
     [scrollView addSubview:imageContainer];
-    
-    if (type == EditViewControllerTypeAdd)
-    {
-        [cancelButton setImage:[UIImage imageNamed:@"common_close"] forState:UIControlStateNormal];
-        navItem.title = @"添加";
-    }
-    else
-    {
-        [cancelButton setTitle:@"返回" forState:UIControlStateNormal];
-        [cancelButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-        navItem.title = @"编辑";
-    }
     
     addImageButton = [UIButton buttonWithType:UIButtonTypeContactAdd];
     addImageButton.frame = CGRectMake(10, 0, 60, 60);
@@ -119,6 +120,11 @@
     addImageButton.tintColor = [UIColor darkGrayColor];
     addImageButton.tag = 99999;
     [imageContainer addSubview:addImageButton];
+    
+    deleteButton = [[UIButton alloc] initWithFrame:CGRectMake(frame.origin.x, top + 80, FULLSCREEN_WIDTH - 2*frame.origin.x, 40)];
+    [deleteButton setTitle:@"删  除" forState:UIControlStateNormal];
+    [deleteButton setTitleColor:[UIColor redColor] forState:UIControlStateNormal];
+    deleteButton.backgroundColor = COLOR_AC;
 }
 
 - (void)textViewDidChange:(UITextView *)textView
@@ -313,6 +319,7 @@
 
 - (IBAction)save:(id)sender
 {
+
     selectedItem.title = titleText.text;
     selectedItem.detail = detailText.text;
     BOOL isInvalid = !selectedItem.title.length && !selectedItem.detail.length;
@@ -345,19 +352,22 @@
     }
     
     [(MainViewController *)[self.navigationController.viewControllers objectAtIndex:0] refreshRemindCount:nil];
+    
+    [self closeKeyBoard:nil];
+    self.navigationController.navigationBarHidden = NO;
 }
 
-- (IBAction)cancel:(id)sender
+- (void)cancel:(id)sender
 {
     [self closeKeyBoard:nil];
-    if (type == EditViewControllerTypeEdit)
-    {
-        [self.navigationController popViewControllerAnimated:YES];
-    }
-    else
-    {
-        [self dismissViewControllerAnimated:YES completion:nil];
-    }
+    [self.navigationController popViewControllerAnimated:YES];
+}
+
+- (IBAction)close:(id)sender
+{
+    [self closeKeyBoard:nil];
+    self.navigationController.navigationBarHidden = NO;
+    [self dismissViewControllerAnimated:YES completion:nil];
 }
 
 - (IBAction)deleteItem:(id)sender

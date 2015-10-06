@@ -14,54 +14,9 @@
         <view clearsContextBeforeDrawing="NO" contentMode="scaleToFill" id="i5M-Pr-FkT">
             <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-            <subviews>
-                <navigationBar contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="OYd-Rb-SLN">
-                    <rect key="frame" x="0.0" y="0.0" width="320" height="64"/>
-                    <animations/>
-                    <constraints>
-                        <constraint firstAttribute="height" constant="64" id="XWW-ja-Jub"/>
-                    </constraints>
-                    <color key="barTintColor" red="0.43529411759999997" green="0.4431372549" blue="0.47450980390000003" alpha="1" colorSpace="calibratedRGB"/>
-                    <textAttributes key="titleTextAttributes">
-                        <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                    </textAttributes>
-                    <items>
-                        <navigationItem title="提醒" id="CkI-2c-MBz">
-                            <barButtonItem key="leftBarButtonItem" id="rNB-GH-qhZ">
-                                <button key="customView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="y6N-xv-JtA" userLabel="Cancel Button">
-                                    <rect key="frame" x="16" y="27" width="30" height="30"/>
-                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                    <animations/>
-                                    <state key="normal" title="返回"/>
-                                    <connections>
-                                        <action selector="back:" destination="-1" eventType="touchUpInside" id="waI-Ov-spt"/>
-                                    </connections>
-                                </button>
-                            </barButtonItem>
-                            <barButtonItem key="rightBarButtonItem" id="K2K-AD-tBu">
-                                <button key="customView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="6sP-IS-svP">
-                                    <rect key="frame" x="274" y="27" width="30" height="30"/>
-                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                    <animations/>
-                                    <fontDescription key="fontDescription" type="system" pointSize="15"/>
-                                    <state key="normal" title="编辑"/>
-                                    <connections>
-                                        <action selector="edit:" destination="-1" eventType="touchUpInside" id="SZ6-5s-DW8"/>
-                                    </connections>
-                                </button>
-                            </barButtonItem>
-                        </navigationItem>
-                    </items>
-                </navigationBar>
-            </subviews>
             <animations/>
             <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
             <color key="tintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-            <constraints>
-                <constraint firstAttribute="trailing" secondItem="OYd-Rb-SLN" secondAttribute="trailing" id="9mU-rr-wOb"/>
-                <constraint firstItem="OYd-Rb-SLN" firstAttribute="top" secondItem="i5M-Pr-FkT" secondAttribute="top" id="FsA-hm-Gn4"/>
-                <constraint firstItem="OYd-Rb-SLN" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" id="pXu-PS-QgH"/>
-            </constraints>
             <simulatedScreenMetrics key="simulatedDestinationMetrics" type="retina4"/>
         </view>
     </objects>

@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		B620FED31BBFAB7900528177 /* SettingViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B620FED11BBFAB7900528177 /* SettingViewController.m */; settings = {ASSET_TAGS = (); }; };
 		B620FED41BBFAB7900528177 /* SettingViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = B620FED21BBFAB7900528177 /* SettingViewController.xib */; settings = {ASSET_TAGS = (); }; };
+		B6492B621BC3641900122010 /* reminderNavigationBar.m in Sources */ = {isa = PBXBuildFile; fileRef = B6492B611BC3641900122010 /* reminderNavigationBar.m */; settings = {ASSET_TAGS = (); }; };
 		B64A205A1BC2A0C000EBCD7D /* save.png in Resources */ = {isa = PBXBuildFile; fileRef = B64A20591BC2A0C000EBCD7D /* save.png */; settings = {ASSET_TAGS = (); }; };
 		B64A20F51BC2A7AD00EBCD7D /* UIView+PBExtend.m in Sources */ = {isa = PBXBuildFile; fileRef = B64A20611BC2A7AD00EBCD7D /* UIView+PBExtend.m */; settings = {ASSET_TAGS = (); }; };
 		B64A20F61BC2A7AD00EBCD7D /* PBConst.m in Sources */ = {isa = PBXBuildFile; fileRef = B64A20641BC2A7AD00EBCD7D /* PBConst.m */; settings = {ASSET_TAGS = (); }; };
@@ -123,6 +124,8 @@
 		B620FED01BBFAB7900528177 /* SettingViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SettingViewController.h; sourceTree = "<group>"; };
 		B620FED11BBFAB7900528177 /* SettingViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SettingViewController.m; sourceTree = "<group>"; };
 		B620FED21BBFAB7900528177 /* SettingViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SettingViewController.xib; sourceTree = "<group>"; };
+		B6492B601BC3641900122010 /* reminderNavigationBar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = reminderNavigationBar.h; sourceTree = "<group>"; };
+		B6492B611BC3641900122010 /* reminderNavigationBar.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = reminderNavigationBar.m; sourceTree = "<group>"; };
 		B64A20591BC2A0C000EBCD7D /* save.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = save.png; sourceTree = "<group>"; };
 		B64A20601BC2A7AD00EBCD7D /* UIView+PBExtend.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIView+PBExtend.h"; sourceTree = "<group>"; };
 		B64A20611BC2A7AD00EBCD7D /* UIView+PBExtend.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIView+PBExtend.m"; sourceTree = "<group>"; };
@@ -734,6 +737,8 @@
 				B66CB4381BC2441D0012AF18 /* MainViewController.xib */,
 				B67438531BBD6B250005DD56 /* AppDelegate.h */,
 				B67438541BBD6B250005DD56 /* AppDelegate.m */,
+				B6492B601BC3641900122010 /* reminderNavigationBar.h */,
+				B6492B611BC3641900122010 /* reminderNavigationBar.m */,
 				B674386F1BBD6E5E0005DD56 /* ReminderManager.h */,
 				B67438701BBD6E5E0005DD56 /* ReminderManager.m */,
 				B67438751BBD6F2C0005DD56 /* EventItem.h */,
@@ -946,6 +951,7 @@
 				B64A21121BC2A7AD00EBCD7D /* UIImage+FixOrientation.m in Sources */,
 				B64A21291BC2A7AD00EBCD7D /* UIButton+SD.m in Sources */,
 				B64A21271BC2A7AD00EBCD7D /* UIImageView+WebCache.m in Sources */,
+				B6492B621BC3641900122010 /* reminderNavigationBar.m in Sources */,
 				B64A21041BC2A7AD00EBCD7D /* CoreArchive.m in Sources */,
 				B66CB4131BC23DC60012AF18 /* MainViewController.m in Sources */,
 				B64A211F1BC2A7AD00EBCD7D /* SDWebImageDownloaderOperation.m in Sources */,
