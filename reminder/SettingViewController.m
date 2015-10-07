@@ -10,10 +10,10 @@
 #import "ReminderManager.h"
 #import "MainViewController.h"
 
-@interface SettingViewController ()
+@interface SettingViewController ()<UIPickerViewDataSource, UIPickerViewDelegate>
 
-@property (nonatomic, weak) IBOutlet UITextField *numberText;
 @property (nonatomic, weak) IBOutlet UINavigationBar *navBar;
+@property (nonatomic, weak) IBOutlet UIPickerView *pickerView;
 
 @end
 
@@ -22,9 +22,9 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view from its nib.
+    [self.pickerView selectRow:[ReminderManager getItemCountToRemindPerDay] inComponent:0 animated:NO];
     self.view.backgroundColor = COLOR_AB;
     self.navBar.barTintColor = COLOR_AG;
-    self.numberText.text = [NSString stringWithFormat:@"%lu", (unsigned long)[ReminderManager getItemCountToRemindPerDay]];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -39,21 +39,26 @@
 
 - (IBAction)save:(id)sender
 {
-    if (self.numberText.text.length == 0) {
-        return;
-    }
-    [ReminderManager setItemCountToRemindPerDay:[self.numberText.text integerValue]];
-    [self.navigationController popViewControllerAnimated:YES];
+    [ReminderManager setItemCountToRemindPerDay:[self.pickerView selectedRowInComponent:0]];
     
-    [(MainViewController *)[self.navigationController.viewControllers objectAtIndex:0] refreshRemindCount:nil];
-
+    [self dismissViewControllerAnimated:YES completion:nil];
+    
+    [[NSNotificationCenter defaultCenter] postNotificationName:NT_REFRESH_MAIN object:self];
 }
 
-- (void)touchesEnded:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event
+- (NSInteger)numberOfComponentsInPickerView:(UIPickerView *)pickerView
 {
-    if (![self.numberText isExclusiveTouch]) {
-        [self.numberText resignFirstResponder];
-    }
+    return 1;
+}
+
+- (NSInteger)pickerView:(UIPickerView *)pickerView numberOfRowsInComponent:(NSInteger)component
+{
+    return 100;
+}
+
+- (nullable NSString *)pickerView:(UIPickerView *)pickerView titleForRow:(NSInteger)row forComponent:(NSInteger)component
+{
+    return [NSString stringWithFormat:@"%d",(int)row];
 }
 
 @end

@@ -10,8 +10,7 @@
 #import <UIKit/UIKit.h>
 #import "ReminderViewController.h"
 #import "EventItem.h"
-#import "CommonResources.h"
-
+#import "common.h"
 #define FULLSCREEN_WIDTH [UIScreen mainScreen].bounds.size.width
 #define FULLSCREEN_HEIGHT [UIScreen mainScreen].bounds.size.height
 
@@ -42,6 +41,11 @@
 
 + (void)setReminderViewController:(ReminderViewController *)reminderVC;
 + (ReminderViewController *)getReminderViewController;
+
++ (BOOL)saveImageToFile:(UIImage *)image ForItem:(EventItem *)item index:(NSUInteger)index;
++ (BOOL)removeImageInFileForItem:(EventItem *)item index:(NSUInteger)index;
+
++ (void)removeEventImagesInFile:(EventItem *)item;
 
 + (void)setCurrentItemIndex:(NSUInteger)index;
 + (NSInteger)getCurrentItemIndex;

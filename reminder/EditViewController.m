@@ -66,6 +66,9 @@
             [saveButtonImage addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(save:)]];
             UIBarButtonItem *saveItem = [[UIBarButtonItem alloc] initWithCustomView:saveButtonImage];
             [self.navigationItem setRightBarButtonItem:saveItem];
+            
+            UIBarButtonItem *resighItem = [[UIBarButtonItem alloc] initWithTitle:@"取消" style:UIBarButtonItemStyleBordered target:self action:@selector(resighed:)];
+            [self.navigationItem setLeftBarButtonItem:resighItem];
         }
         else
         {
@@ -168,14 +171,19 @@
 - (void)registerObservers:(id)sender
 {
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(deleteImage:) name:@"deleteImage" object:nil];
+    if (type == EditViewControllerTypeAdd)
+    {
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(close:) name:UIApplicationWillTerminateNotification object:nil];
+    }
 }
 
 - (void)deleteImage:(NSNotification *)noti
 {
     NSNumber *number = noti.object;
     NSUInteger index = [number unsignedIntegerValue];
+    [ReminderManager removeImageInFileForItem:selectedItem index:index];
     [selectedItem.images removeObjectAtIndex:index];
-    [self buildImageView:nil];
+    [NSTimer scheduledTimerWithTimeInterval:0.5 target:self selector:@selector(buildImageView:) userInfo:nil repeats:NO];
 }
 
 - (void)textViewDidChange:(UITextView *)textView
@@ -238,6 +246,8 @@
         imagePickerController.sourceType = sourceType;
         
         [self presentViewController:imagePickerController animated:YES completion:^{}];
+        
+        [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleDefault animated:YES];
     }
 }
 
@@ -268,7 +278,11 @@
     
     [selectedItem.images addObject:image];
     
+    [ReminderManager saveImageToFile:image ForItem:selectedItem index:selectedItem.images.count - 1];
+    
     [self buildImageView:nil];
+    
+    [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent animated:YES];
 }
 
 - (void)buildImageView:(id)sender
@@ -390,9 +404,6 @@
     
     selectedItem.title = titleText.text;
     selectedItem.detail = detailText.text;
-    if (!selectedItem.title.length) {
-        selectedItem.title = @"未命名事项";
-    }
     BOOL isInvalid = !selectedItem.title.length && !selectedItem.detail.length && selectedItem.images.count == 0;
     if (type == EditViewControllerTypeEdit)
     {
@@ -407,7 +418,12 @@
     else
     {
         if(!isInvalid)
+        {
+            if (!selectedItem.title.length) {
+                selectedItem.title = @"未命名事项";
+            }
             [ReminderManager addItem:selectedItem];
+        }
     }
     
     [[ReminderManager getMainTableView] reloadData];
@@ -422,23 +438,23 @@
         [self dismissViewControllerAnimated:YES completion:nil];
     }
     
-    [(MainViewController *)[self.navigationController.viewControllers objectAtIndex:0] refreshRemindCount:nil];
+    [[NSNotificationCenter defaultCenter] postNotificationName:NT_REFRESH_MAIN object:self];
     
     [self closeKeyBoard:nil];
     self.navigationController.navigationBarHidden = NO;
-}
-
-- (void)cancel:(id)sender
-{
-    [self closeKeyBoard:nil];
-    [self.navigationController popViewControllerAnimated:YES];
 }
 
 - (IBAction)close:(id)sender
 {
     [self closeKeyBoard:nil];
     self.navigationController.navigationBarHidden = NO;
+    [ReminderManager removeEventImagesInFile:selectedItem];
     [self dismissViewControllerAnimated:YES completion:nil];
+}
+
+- (void)resighed:(id)sender
+{
+    [self.navigationController popViewControllerAnimated:YES];
 }
 
 - (void)deleteItem:(id)sender

@@ -30,6 +30,8 @@
     
     [ReminderManager setMainTableView:mainTableView];
     
+    [self registerNotificationObservers:nil];
+    
     [self refreshRemindCount:nil];
     
     self.navigationController.delegate = self;
@@ -64,6 +66,11 @@
     UIImageView *rightArrowImageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"right"]];
     rightArrowImageView.frame = CGRectMake(FULLSCREEN_WIDTH - 40, 12, 17, 15);
     [seeReminderViewButton addSubview:rightArrowImageView];
+}
+
+- (void)registerNotificationObservers:(id)sender
+{
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(refreshRemindCount:) name:NT_REFRESH_MAIN object:nil];
 }
 
 - (void)refreshRemindCount:(id)sender

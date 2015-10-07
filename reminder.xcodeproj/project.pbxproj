@@ -85,6 +85,7 @@
 		B67438771BBD6F2C0005DD56 /* EventItem.m in Sources */ = {isa = PBXBuildFile; fileRef = B67438761BBD6F2C0005DD56 /* EventItem.m */; settings = {ASSET_TAGS = (); }; };
 		B674387B1BBD7F920005DD56 /* EditViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B67438791BBD7F920005DD56 /* EditViewController.m */; settings = {ASSET_TAGS = (); }; };
 		B674387C1BBD7F920005DD56 /* EditViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = B674387A1BBD7F920005DD56 /* EditViewController.xib */; settings = {ASSET_TAGS = (); }; };
+		B67F4E041BC529E4003A8014 /* ReminderTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = B67F4E031BC529E4003A8014 /* ReminderTableViewCell.m */; settings = {ASSET_TAGS = (); }; };
 		B690EF811BC29327007F2A68 /* ReminderViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = B690EF801BC29327007F2A68 /* ReminderViewController.xib */; settings = {ASSET_TAGS = (); }; };
 		B6B13A4E1BBE1CE4004BBE32 /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = B6B13A4D1BBE1CE4004BBE32 /* Default-568h@2x.png */; settings = {ASSET_TAGS = (); }; };
 		B6DF03B61BBE4ACB00D8C9EF /* ReminderViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B6DF03B41BBE4ACB00D8C9EF /* ReminderViewController.m */; settings = {ASSET_TAGS = (); }; };
@@ -254,7 +255,6 @@
 		B66CB4101BC23DC60012AF18 /* MainViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MainViewController.h; sourceTree = "<group>"; };
 		B66CB4111BC23DC60012AF18 /* MainViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MainViewController.m; sourceTree = "<group>"; };
 		B66CB4381BC2441D0012AF18 /* MainViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = MainViewController.xib; path = resources/MainViewController.xib; sourceTree = "<group>"; };
-		B66CB43A1BC24AD70012AF18 /* CommonResources.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = CommonResources.h; path = ../../CommonResources.h; sourceTree = "<group>"; };
 		B674384D1BBD6B250005DD56 /* reminder.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = reminder.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B67438511BBD6B250005DD56 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		B67438531BBD6B250005DD56 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -267,6 +267,11 @@
 		B67438781BBD7F920005DD56 /* EditViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EditViewController.h; sourceTree = "<group>"; };
 		B67438791BBD7F920005DD56 /* EditViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EditViewController.m; sourceTree = "<group>"; };
 		B674387A1BBD7F920005DD56 /* EditViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = EditViewController.xib; sourceTree = "<group>"; };
+		B67F4E021BC529E4003A8014 /* ReminderTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ReminderTableViewCell.h; sourceTree = "<group>"; };
+		B67F4E031BC529E4003A8014 /* ReminderTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ReminderTableViewCell.m; sourceTree = "<group>"; };
+		B67F4E061BC52F9C003A8014 /* CommonResources.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommonResources.h; sourceTree = "<group>"; };
+		B67F4E071BC52FCE003A8014 /* NotificationNames.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NotificationNames.h; sourceTree = "<group>"; };
+		B67F4E081BC53014003A8014 /* common.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = common.h; sourceTree = "<group>"; };
 		B690EF801BC29327007F2A68 /* ReminderViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ReminderViewController.xib; sourceTree = "<group>"; };
 		B6B13A4D1BBE1CE4004BBE32 /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Default-568h@2x.png"; path = "../Default-568h@2x.png"; sourceTree = "<group>"; };
 		B6DF03B31BBE4ACB00D8C9EF /* ReminderViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ReminderViewController.h; sourceTree = "<group>"; };
@@ -730,6 +735,7 @@
 		B674384F1BBD6B250005DD56 /* reminder */ = {
 			isa = PBXGroup;
 			children = (
+				B67F4E051BC52F9C003A8014 /* base */,
 				B64A205C1BC2A7AD00EBCD7D /* vendors */,
 				B6EA42031BC2167500E1DAF5 /* resources */,
 				B66CB4101BC23DC60012AF18 /* MainViewController.h */,
@@ -752,6 +758,8 @@
 				B620FED01BBFAB7900528177 /* SettingViewController.h */,
 				B620FED11BBFAB7900528177 /* SettingViewController.m */,
 				B620FED21BBFAB7900528177 /* SettingViewController.xib */,
+				B67F4E021BC529E4003A8014 /* ReminderTableViewCell.h */,
+				B67F4E031BC529E4003A8014 /* ReminderTableViewCell.m */,
 				B66C13BF1BBFCDCB007DE660 /* Images.xcassets */,
 				B67438501BBD6B250005DD56 /* Supporting Files */,
 			);
@@ -768,13 +776,23 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
+		B67F4E051BC52F9C003A8014 /* base */ = {
+			isa = PBXGroup;
+			children = (
+				B67F4E061BC52F9C003A8014 /* CommonResources.h */,
+				B67F4E071BC52FCE003A8014 /* NotificationNames.h */,
+				B67F4E081BC53014003A8014 /* common.h */,
+			);
+			name = base;
+			path = resources/base;
+			sourceTree = "<group>";
+		};
 		B6EA42031BC2167500E1DAF5 /* resources */ = {
 			isa = PBXGroup;
 			children = (
 				B66C13B91BBFCD73007DE660 /* icon@2x.png */,
 				B66C13BD1BBFCDA4007DE660 /* icon@3x.png */,
 				B64A20591BC2A0C000EBCD7D /* save.png */,
-				B66CB43A1BC24AD70012AF18 /* CommonResources.h */,
 				B66CB4081BC236E30012AF18 /* right.png */,
 				B66CB4091BC236E30012AF18 /* right@2x.png */,
 				B66CB40A1BC236E30012AF18 /* right@3x.png */,
@@ -971,6 +989,7 @@
 				B64A21201BC2A7AD00EBCD7D /* SDWebImageManager.m in Sources */,
 				B64A211D1BC2A7AD00EBCD7D /* SDWebImageDecoder.m in Sources */,
 				B674387B1BBD7F920005DD56 /* EditViewController.m in Sources */,
+				B67F4E041BC529E4003A8014 /* ReminderTableViewCell.m in Sources */,
 				B64A210E1BC2A7AD00EBCD7D /* UIFont+Extend.m in Sources */,
 				B64A20FA1BC2A7AD00EBCD7D /* PBBlurImageView.m in Sources */,
 				B64A21101BC2A7AD00EBCD7D /* UIImage+Cut.m in Sources */,

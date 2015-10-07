@@ -10,6 +10,4 @@
 
 @interface MainViewController : UIViewController<UITableViewDataSource, UITableViewDelegate>
 
-- (void)refreshRemindCount:(id)sender;
-
 @end

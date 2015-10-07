@@ -22,7 +22,6 @@ static ReminderViewController *reminder;
     [ReminderManager initUserInfo];
     [itemQueue addObject:newItem];
     [ReminderManager saveUserInfoToDatabase];
-    [ReminderManager saveEventImagesToFile:newItem];
 }
 
 + (void)removeItemAtIndex:(NSUInteger)index
@@ -51,8 +50,6 @@ static ReminderViewController *reminder;
     [ReminderManager initUserInfo];
     if (itemQueue.count > index) {
         [itemQueue replaceObjectAtIndex:index withObject:newItem];
-        [ReminderManager saveUserInfoToDatabase];
-        [ReminderManager saveEventImagesToFile:newItem];
     }
 }
 
@@ -102,24 +99,24 @@ static ReminderViewController *reminder;
         }
         return (NSComparisonResult)NSOrderedSame;
     };
-        return [itemQueue sortedArrayUsingComparator:cmptr];
+    return [itemQueue sortedArrayUsingComparator:cmptr];
 }
 
 + (NSArray *)getItemsNeedBeenRemind;
 {
     [ReminderManager initUserInfo];
-
+    
     NSUInteger maxIndex = itemQueue.count > itemCountToRemind ? itemCountToRemind : itemQueue.count;
     NSUInteger chosenCount = 0;
     NSMutableArray *returnItemList = [NSMutableArray new];
     NSArray *tempList = [self getAllItemsInRemindOrder];
     for (EventItem *item in tempList) {
+        if (chosenCount == maxIndex) {
+            break;
+        }
         if ([item needBeenRemind]) {
             chosenCount ++;
             [returnItemList addObject:item];
-        }
-        if (chosenCount == maxIndex) {
-            break;
         }
     }
     return returnItemList;
@@ -133,14 +130,16 @@ static ReminderViewController *reminder;
 + (void)setItemCountToRemindPerDay:(NSUInteger)count;
 {
     [ReminderManager initUserInfo];
-
+    
     itemCountToRemind = count;
+    
+    [ReminderManager saveUserInfoToDatabase];
 }
 
 + (NSUInteger)getItemCountToRemindPerDay;
 {
     [ReminderManager initUserInfo];
-
+    
     return itemCountToRemind;
 }
 
@@ -192,6 +191,25 @@ static ReminderViewController *reminder;
 {
     NSString *dirName = [NSString stringWithFormat:@"%f",[item.createTime timeIntervalSince1970]];
     deleteDirInDocument(dirName);
+}
+
++ (BOOL)saveImageToFile:(UIImage *)image ForItem:(EventItem *)item index:(NSUInteger)index
+{
+    NSString *dirName = [NSString stringWithFormat:@"%f",[item.createTime timeIntervalSince1970]];
+    
+    return saveImageToDirectory(pathInDocumentDirectory(dirName), image, [NSString stringWithFormat:@"%lu", (unsigned long)index], @"png");
+}
+
++ (BOOL)removeImageInFileForItem:(EventItem *)item index:(NSUInteger)index
+{
+    BOOL success = NO;
+    NSString *dirName = [NSString stringWithFormat:@"%f",[item.createTime timeIntervalSince1970]];
+    NSString *dirPath = pathInDocumentDirectory(dirName);
+    success = removeFileInDirectory(dirPath, [NSString stringWithFormat:@"%lu.png", (unsigned long)index]);
+    for (NSUInteger i = index; i < item.images.count; i++) {
+        success = changeFileNameInDirectory(dirPath, [NSString stringWithFormat:@"%lu",i+1], [NSString stringWithFormat:@"%lu",(unsigned long)i]);
+    }
+    return success;
 }
 
 + (void)setMainTableView:(UITableView *)tableView
@@ -268,24 +286,54 @@ bool saveImageToDirectory(NSString *directoryPath, UIImage *image, NSString *ima
     BOOL isDir = NO;
     NSFileManager *fileManager = [NSFileManager defaultManager];
     BOOL existed = [fileManager fileExistsAtPath:directoryPath isDirectory:&isDir];
+    if (!existed || !isDir) {
+        [fileManager createDirectoryAtPath:directoryPath withIntermediateDirectories:YES attributes:nil error:nil];
+        NSLog(@"directory created at Path:%@", directoryPath);
+    }
     bool isSaved = false;
-    if ( isDir == YES && existed == YES )
+    if ([[imageType lowercaseString] isEqualToString:@"png"])
     {
-        if ([[imageType lowercaseString] isEqualToString:@"png"])
-        {
-            isSaved = [UIImagePNGRepresentation(image) writeToFile:[directoryPath stringByAppendingPathComponent:[NSString stringWithFormat:@"%@.%@", imageName, @"png"]] options:NSAtomicWrite error:nil];
-        }
-        else if ([[imageType lowercaseString] isEqualToString:@"jpg"] || [[imageType lowercaseString] isEqualToString:@"jpeg"])
-        {
-            isSaved = [UIImageJPEGRepresentation(image, 1.0) writeToFile:[directoryPath stringByAppendingPathComponent:[NSString stringWithFormat:@"%@.%@", imageName, @"jpg"]] options:NSAtomicWrite error:nil];
-        }
-        else
-        {
-            NSLog(@"Image Save Failed\nExtension: (%@) is not recognized, use (PNG/JPG)", imageType);
-        }
+        isSaved = [UIImagePNGRepresentation(image) writeToFile:[directoryPath stringByAppendingPathComponent:[NSString stringWithFormat:@"%@.%@", imageName, @"png"]] options:NSAtomicWrite error:nil];
+    }
+    else if ([[imageType lowercaseString] isEqualToString:@"jpg"] || [[imageType lowercaseString] isEqualToString:@"jpeg"])
+    {
+        isSaved = [UIImageJPEGRepresentation(image, 1.0) writeToFile:[directoryPath stringByAppendingPathComponent:[NSString stringWithFormat:@"%@.%@", imageName, @"jpg"]] options:NSAtomicWrite error:nil];
+    }
+    else
+    {
+        NSLog(@"Image Save Failed\nExtension: (%@) is not recognized, use (PNG/JPG)", imageType);
     }
     return isSaved;
 }
+
+bool removeFileInDirectory(NSString *directoryPath, NSString *fileName)
+{
+    NSString *filePath = [directoryPath stringByAppendingPathComponent:fileName];
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    if([fileManager fileExistsAtPath:filePath])
+    {
+        NSError *err;
+        [fileManager removeItemAtPath:filePath error:&err];
+        if (err)
+        {
+            return false;
+        }
+        else
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
+bool changeFileNameInDirectory(NSString *directoryPath, NSString *oldfileName, NSString *newfileName)
+{
+    NSString *oldPath = [directoryPath stringByAppendingPathComponent:oldfileName];
+    NSString *newPath = [directoryPath stringByAppendingPathComponent:newfileName];
+    
+    return [[NSFileManager defaultManager] moveItemAtPath:oldPath toPath:newPath error:nil];
+}
+
 
 // load Image from caches dir to imageview
 UIImage* loadImage(NSString *directoryPath, NSString *imageName)

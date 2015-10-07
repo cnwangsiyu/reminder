@@ -8,7 +8,7 @@
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="SettingViewController">
             <connections>
                 <outlet property="navBar" destination="lNN-sg-peE" id="rCk-7X-VXY"/>
-                <outlet property="numberText" destination="HNS-TP-kg9" id="Yf0-eW-N1f"/>
+                <outlet property="pickerView" destination="AKz-Aa-K4a" id="ATb-ah-xje"/>
                 <outlet property="view" destination="i5M-Pr-FkT" id="sfx-zR-JGt"/>
             </connections>
         </placeholder>
@@ -17,18 +17,8 @@
             <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
-                <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="center" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="HNS-TP-kg9">
-                    <rect key="frame" x="110" y="164" width="100" height="30"/>
-                    <animations/>
-                    <constraints>
-                        <constraint firstAttribute="width" constant="100" id="B1e-JS-i0Q"/>
-                        <constraint firstAttribute="height" constant="30" id="qEd-q9-sYx"/>
-                    </constraints>
-                    <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                    <textInputTraits key="textInputTraits" keyboardType="numberPad"/>
-                </textField>
                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="设置每天提醒的数量" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="3bZ-Hb-hQ3">
-                    <rect key="frame" x="83" y="114" width="153" height="20.5"/>
+                    <rect key="frame" x="83" y="104" width="153" height="20.5"/>
                     <animations/>
                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                     <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
@@ -71,17 +61,29 @@
                         </navigationItem>
                     </items>
                 </navigationBar>
+                <pickerView contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="AKz-Aa-K4a">
+                    <rect key="frame" x="60" y="139.5" width="200" height="216"/>
+                    <animations/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="216" id="oyn-nq-6pu"/>
+                        <constraint firstAttribute="width" constant="200" id="y1j-NE-kGx"/>
+                    </constraints>
+                    <connections>
+                        <outlet property="dataSource" destination="-1" id="dTl-6Q-xdU"/>
+                        <outlet property="delegate" destination="-1" id="Hjd-jr-mh6"/>
+                    </connections>
+                </pickerView>
             </subviews>
             <animations/>
             <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
             <color key="tintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
             <constraints>
+                <constraint firstItem="AKz-Aa-K4a" firstAttribute="centerX" secondItem="i5M-Pr-FkT" secondAttribute="centerX" id="9Eq-zY-80l"/>
                 <constraint firstItem="3bZ-Hb-hQ3" firstAttribute="centerX" secondItem="i5M-Pr-FkT" secondAttribute="centerX" id="EKt-8J-JkW"/>
-                <constraint firstItem="lNN-sg-peE" firstAttribute="bottom" secondItem="3bZ-Hb-hQ3" secondAttribute="top" constant="-50" id="Fz5-kZ-P0g"/>
-                <constraint firstItem="HNS-TP-kg9" firstAttribute="centerX" secondItem="i5M-Pr-FkT" secondAttribute="centerX" id="JD3-VH-7Ec"/>
+                <constraint firstItem="lNN-sg-peE" firstAttribute="bottom" secondItem="3bZ-Hb-hQ3" secondAttribute="top" constant="-40" id="Fz5-kZ-P0g"/>
                 <constraint firstItem="lNN-sg-peE" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" id="U0Q-rF-sji"/>
+                <constraint firstItem="AKz-Aa-K4a" firstAttribute="top" secondItem="3bZ-Hb-hQ3" secondAttribute="bottom" constant="15" id="Y5M-wQ-XFb"/>
                 <constraint firstItem="lNN-sg-peE" firstAttribute="top" secondItem="i5M-Pr-FkT" secondAttribute="top" id="Zob-N1-2fW"/>
-                <constraint firstItem="HNS-TP-kg9" firstAttribute="top" secondItem="lNN-sg-peE" secondAttribute="bottom" constant="100" id="qW8-Le-S25"/>
                 <constraint firstAttribute="trailing" secondItem="lNN-sg-peE" secondAttribute="trailing" id="yEy-wX-Yki"/>
             </constraints>
             <simulatedScreenMetrics key="simulatedDestinationMetrics" type="retina4"/>
