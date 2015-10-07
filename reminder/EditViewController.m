@@ -24,6 +24,7 @@
     UITextView *detailText;
     UIButton *deleteButton;
     float top;
+    float imageWidth;
     enum EditViewControllerType type;
 }
 
@@ -50,98 +51,117 @@
 
 - (void)buildViews:(id)sender
 {
-    self.view.backgroundColor = COLOR_AB;
-    
-    if (type == EditViewControllerTypeEdit)
     {
-        self.title = @"编辑";
-        AddModeNavBar.hidden = YES;
+        self.view.backgroundColor = COLOR_AB;
+    }
+    
+    {
+        if (type == EditViewControllerTypeEdit)
+        {
+            self.title = @"编辑";
+            AddModeNavBar.hidden = YES;
+            
+            UIImageView *saveButtonImage = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"save"]];
+            saveButtonImage.frame = CGRectMake(0, 0, 24, 24);
+            [saveButtonImage addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(save:)]];
+            UIBarButtonItem *saveItem = [[UIBarButtonItem alloc] initWithCustomView:saveButtonImage];
+            [self.navigationItem setRightBarButtonItem:saveItem];
+        }
+        else
+        {
+            self.navigationController.navigationBarHidden = YES;
+            AddModeNavBar.barTintColor = COLOR_AG;
+        }
+    }
+    
+    {
+        scrollView = [[UIScrollView alloc] initWithFrame:CGRectMake(0, 64, FULLSCREEN_WIDTH, FULLSCREEN_HEIGHT - 64)];
+        scrollView.userInteractionEnabled = YES;
+        [scrollView addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(closeKeyBoard:)]];
         
-        UIImageView *saveButtonImage = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"save"]];
-        saveButtonImage.frame = CGRectMake(0, 0, 24, 24);
-        [saveButtonImage addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(save:)]];
-        UIBarButtonItem *saveItem = [[UIBarButtonItem alloc] initWithCustomView:saveButtonImage];
-        [self.navigationItem setRightBarButtonItem:saveItem];
+        [self.view addSubview:scrollView];
     }
-    else
+    
     {
-        self.navigationController.navigationBarHidden = YES;
-        AddModeNavBar.barTintColor = COLOR_AG;
+        titleText = [[UITextField alloc] initWithFrame:CGRectMake(10, 20, FULLSCREEN_WIDTH - 20, 40)];
+        titleText.borderStyle = UITextBorderStyleRoundedRect;
+        titleText.text = selectedItem.title;
+        titleText.textAlignment = NSTextAlignmentLeft;
+        titleText.placeholder = @"请输入标题";
+        titleText.backgroundColor = [UIColor clearColor];
+        titleText.tintColor = [UIColor blackColor];
+        [scrollView addSubview:titleText];
     }
     
-    scrollView = [[UIScrollView alloc] initWithFrame:CGRectMake(0, 64, FULLSCREEN_WIDTH, FULLSCREEN_HEIGHT - 64)];
-    scrollView.contentSize = CGSizeMake(FULLSCREEN_WIDTH, FULLSCREEN_HEIGHT - 64);
-    
-    scrollView.userInteractionEnabled = YES;
-    [scrollView addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(closeKeyBoard:)]];
-    
-    [self.view addSubview:scrollView];
-    
-    titleText = [[UITextField alloc] initWithFrame:CGRectMake(10, 20, FULLSCREEN_WIDTH - 20, 40)];
-    titleText.borderStyle = UITextBorderStyleRoundedRect;
-    titleText.text = selectedItem.title;
-    titleText.textAlignment = NSTextAlignmentLeft;
-    titleText.placeholder = @"请输入标题";
-    titleText.backgroundColor = [UIColor clearColor];
-    titleText.tintColor = [UIColor blackColor];
-    [scrollView addSubview:titleText];
-    
-    detailText = [[UITextView alloc] initWithFrame:CGRectMake(10, 80, FULLSCREEN_WIDTH - 20, 200)];
-    detailText.text = selectedItem.detail;
-    detailText.layer.borderColor = COLOR_AD.CGColor;
-    detailText.layer.borderWidth = 1;
-    detailText.layer.cornerRadius = 5;
-    detailText.layer.masksToBounds = YES;
-    detailText.backgroundColor = [UIColor clearColor];
-    detailText.font = [UIFont systemFontOfSize:18];
-    detailText.tintColor = titleText.tintColor;
-    detailText.delegate = self;
-    [scrollView addSubview:detailText];
-    
-    UILabel *placeHolder = [[UILabel alloc] initWithFrame:CGRectMake(5, 3, 200, 30)];
-    placeHolder.textColor = [UIColor lightGrayColor];
-    if (detailText.text.length)
     {
-        placeHolder.text = @"";
+        detailText = [[UITextView alloc] initWithFrame:CGRectMake(10, 80, FULLSCREEN_WIDTH - 20, 200)];
+        detailText.text = selectedItem.detail;
+        detailText.layer.borderColor = COLOR_AD.CGColor;
+        detailText.layer.borderWidth = 1;
+        detailText.layer.cornerRadius = 5;
+        detailText.layer.masksToBounds = YES;
+        detailText.backgroundColor = [UIColor clearColor];
+        detailText.font = [UIFont systemFontOfSize:18];
+        detailText.tintColor = titleText.tintColor;
+        detailText.delegate = self;
+        [scrollView addSubview:detailText];
     }
-    else
+    
     {
-        placeHolder.text = @"请输入事件内容";
+        UILabel *placeHolder = [[UILabel alloc] initWithFrame:CGRectMake(5, 3, 200, 30)];
+        placeHolder.textColor = [UIColor lightGrayColor];
+        if (detailText.text.length)
+        {
+            placeHolder.text = @"";
+        }
+        else
+        {
+            placeHolder.text = @"请输入事件内容";
+        }
+        placeHolder.alpha = 0.5;
+        placeHolder.tag = 7658;
+        [detailText addSubview:placeHolder];
     }
-    placeHolder.alpha = 0.5;
-    placeHolder.tag = 7658;
-    [detailText addSubview:placeHolder];
+    
     
     CGRect frame = detailText.frame;
-    top = frame.origin.y + frame.size.height + 10;
-    imageContainer = [[UIView alloc] initWithFrame:CGRectMake(frame.origin.x, top, frame.size.width, 120)];
-    imageContainer.backgroundColor = [UIColor clearColor];
-    [scrollView addSubview:imageContainer];
+    top = frame.origin.y + frame.size.height + 20;
+    imageWidth = (frame.size.width - 3*10) / 4;
     
-    addImageButton = [UIButton buttonWithType:UIButtonTypeContactAdd];
-    addImageButton.frame = CGRectMake(10, 0, 60, 60);
-    [addImageButton addTarget:self action:@selector(pickImage:) forControlEvents:UIControlEventTouchUpInside];
-    addImageButton.tintColor = [UIColor darkGrayColor];
-    addImageButton.layer.borderColor = addImageButton.tintColor.CGColor;
-    addImageButton.layer.borderWidth = 1;
-    addImageButton.layer.cornerRadius = 5;
-    addImageButton.layer.masksToBounds = YES;
-    addImageButton.tag = 99999;
-    [imageContainer addSubview:addImageButton];
+    {
+        imageContainer = [[UIView alloc] initWithFrame:CGRectMake(frame.origin.x, top, frame.size.width, imageWidth)];
+        imageContainer.backgroundColor = [UIColor clearColor];
+        [scrollView addSubview:imageContainer];
+        
+        addImageButton = [UIButton buttonWithType:UIButtonTypeContactAdd];
+        addImageButton.frame = CGRectMake(0, 0, imageWidth, imageWidth);
+        [addImageButton addTarget:self action:@selector(pickImage:) forControlEvents:UIControlEventTouchUpInside];
+        addImageButton.tintColor = [UIColor darkGrayColor];
+        addImageButton.layer.borderColor = addImageButton.tintColor.CGColor;
+        addImageButton.layer.borderWidth = 1;
+        addImageButton.layer.cornerRadius = 5;
+        addImageButton.layer.masksToBounds = YES;
+        addImageButton.tag = 99999;
+        [imageContainer addSubview:addImageButton];
+        scrollView.contentSize = CGSizeMake(FULLSCREEN_WIDTH, imageContainer.frame.origin.y + addImageButton.frame.origin.y + addImageButton.frame.size.height + 50);
+        
+    }
     
-    [self buildImageView:nil];
-    
-    if (type == EditViewControllerTypeEdit) {
-        deleteButton = [[UIButton alloc] initWithFrame:CGRectMake(frame.origin.x, top + 80, FULLSCREEN_WIDTH - 2*frame.origin.x, 40)];
-        deleteButton.layer.borderColor = COLOR_AD.CGColor;
-        deleteButton.layer.borderWidth = 1;
-        deleteButton.layer.cornerRadius = 5;
-        deleteButton.layer.masksToBounds = YES;
-        [deleteButton setTitle:@"删  除" forState:UIControlStateNormal];
-        [deleteButton setTitleColor:[UIColor redColor] forState:UIControlStateNormal];
-        deleteButton.backgroundColor = COLOR_AC;
-        [deleteButton addTarget:self action:@selector(deleteItem:) forControlEvents:UIControlEventTouchUpInside];
-        [scrollView addSubview:deleteButton];
+    {
+        if (type == EditViewControllerTypeEdit) {
+            deleteButton = [[UIButton alloc] initWithFrame:CGRectMake(frame.origin.x, top + 80, FULLSCREEN_WIDTH - 2*frame.origin.x, 40)];
+            deleteButton.layer.borderColor = COLOR_AD.CGColor;
+            deleteButton.layer.borderWidth = 1;
+            deleteButton.layer.cornerRadius = 5;
+            deleteButton.layer.masksToBounds = YES;
+            [deleteButton setTitle:@"删  除" forState:UIControlStateNormal];
+            [deleteButton setTitleColor:[UIColor redColor] forState:UIControlStateNormal];
+            deleteButton.backgroundColor = COLOR_AC;
+            [deleteButton addTarget:self action:@selector(deleteItem:) forControlEvents:UIControlEventTouchUpInside];
+            [scrollView addSubview:deleteButton];
+            scrollView.contentSize = CGSizeMake(FULLSCREEN_WIDTH, deleteButton.frame.origin.y + deleteButton.frame.size.height + 20);
+        }
+        [self buildImageView:nil];
     }
 }
 
@@ -253,7 +273,9 @@
 
 - (void)buildImageView:(id)sender
 {
-    int imageTag = IMAGE_TAG;
+    int index = 0;
+    
+    float imageCellWidth = imageWidth + 10;
     
     for (UIView *childView in imageContainer.subviews)
     {
@@ -265,9 +287,10 @@
     for (UIImage *image in selectedItem.images) {
         
         UIImageView *imageView = [[UIImageView alloc]
-                                  initWithFrame:CGRectMake(70 * ((imageTag - IMAGE_TAG) % 4) + 10,
-                                                           70 * ((imageTag - IMAGE_TAG) / 4),
-                                                           60, 60)];
+                                  initWithFrame:CGRectMake(
+                                                           imageCellWidth * (index % 4),
+                                                           imageCellWidth * (index / 4),
+                                                           imageWidth, imageWidth)];
         imageView.tintColor = [UIColor darkGrayColor];
         imageView.layer.borderColor = addImageButton.tintColor.CGColor;
         imageView.layer.borderWidth = 1;
@@ -276,22 +299,31 @@
         
         imageView.image = image;
         
-        imageView.tag = imageTag;
+        imageView.tag = IMAGE_TAG + index;
         
         imageView.userInteractionEnabled = YES;
         
         [imageView addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(openImageScaleInView:)]];
         
-        imageTag ++ ;
+        index ++ ;
         
         [imageContainer addSubview:imageView];
-        
     }
-    scrollView.contentSize = CGSizeMake(FULLSCREEN_WIDTH, deleteButton.frame.origin.y + deleteButton.frame.size.height + 50);
+    
+    imageContainer.frame = CGRectMake(imageContainer.frame.origin.x, imageContainer.frame.origin.y, imageContainer.frame.size.width, (index / 4) * imageCellWidth + imageWidth);
+    
     addImageButton.frame =
-    CGRectMake(70 * ((imageTag - IMAGE_TAG) % 4) + 10, 70 * ((imageTag - IMAGE_TAG) / 4), 60, 60);
-    if (type == EditViewControllerTypeEdit) {
-        deleteButton.frame = CGRectMake(deleteButton.frame.origin.x, top + 80 + 70 * ((imageTag - IMAGE_TAG) / 4), deleteButton.frame.size.width, deleteButton.frame.size.height);
+    CGRectMake(imageCellWidth * (index % 4), imageCellWidth * (index / 4), imageWidth, imageWidth);
+    
+    if (type == EditViewControllerTypeEdit)
+    {
+        deleteButton.frame = CGRectMake(deleteButton.frame.origin.x, top + 80 + imageCellWidth * (index / 4), deleteButton.frame.size.width, deleteButton.frame.size.height);
+        
+        scrollView.contentSize = CGSizeMake(FULLSCREEN_WIDTH, deleteButton.frame.origin.y + deleteButton.frame.size.height + 20);
+    }
+    else
+    {
+        scrollView.contentSize = CGSizeMake(FULLSCREEN_WIDTH, imageContainer.frame.origin.y + addImageButton.frame.origin.y + addImageButton.frame.size.height + 20);
     }
 }
 

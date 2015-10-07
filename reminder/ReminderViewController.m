@@ -24,6 +24,8 @@
     UIView *buttonContainer;
     UIButton *leftButton;
     UIButton * rightButton;
+    float top;
+    float imageWidth;
 }
 
 @end
@@ -77,7 +79,9 @@
     [scrollView addSubview:detailText];
     
     CGRect frame = detailText.frame;
-    float top = frame.origin.y + frame.size.height + 10;
+    top = frame.origin.y + frame.size.height + 20;
+    imageWidth = (frame.size.width - 3*10) / 4;
+
     imageContainer = [[UIView alloc] initWithFrame:CGRectMake(frame.origin.x, top, frame.size.width, 120)];
     imageContainer.backgroundColor = [UIColor clearColor];
     [scrollView addSubview:imageContainer];
@@ -91,11 +95,11 @@
     [self.view addSubview:buttonContainer];
     
     leftButton = [[UIButton alloc]initWithFrame:CGRectMake(0, 0,FULLSCREEN_WIDTH/2, 50)];
-    [leftButton setTitleColor:[UIColor lightGrayColor] forState:UIControlStateNormal];
+    [leftButton setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
     [buttonContainer addSubview:leftButton];
     
     rightButton = [[UIButton alloc]initWithFrame:CGRectMake(FULLSCREEN_WIDTH / 2, 0, FULLSCREEN_WIDTH/2, 50)];
-    [rightButton setTitleColor:[UIColor lightGrayColor] forState:UIControlStateNormal];
+    [rightButton setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
     [buttonContainer addSubview:rightButton];
     
     if (self.type == reminderViewTypeRemind)
@@ -146,34 +150,45 @@
 
 - (void)buildImageView:(id)sender
 {
-    int imageTag = IMAGE_TAG;
+    int index = 0;
+    
+    float imageCellWidth = imageWidth + 10;
     
     for (UIView *childView in imageContainer.subviews)
     {
-        [childView removeFromSuperview];
+        if (childView.tag != 99999) {
+            [childView removeFromSuperview];
+        }
     }
     
     for (UIImage *image in selectedItem.images) {
         
         UIImageView *imageView = [[UIImageView alloc]
-                                  initWithFrame:CGRectMake(70 * (imageTag - IMAGE_TAG) + 10,
-                                                           70 * ((imageTag - IMAGE_TAG) / 4),
-                                                           60, 60)];
+                                  initWithFrame:CGRectMake(
+                                                           imageCellWidth * (index % 4),
+                                                           imageCellWidth * (index / 4),
+                                                           imageWidth, imageWidth)];
+        imageView.tintColor = [UIColor darkGrayColor];
+        imageView.layer.borderColor = [UIColor darkGrayColor].CGColor;
+        imageView.layer.borderWidth = 1;
+        imageView.layer.cornerRadius = 5;
+        imageView.layer.masksToBounds = YES;
         
         imageView.image = image;
         
-        CGRectMake(70 * (imageTag - IMAGE_TAG) + 10, 70 * ((imageTag - IMAGE_TAG) / 4), 60, 60);
+        imageView.tag = IMAGE_TAG + index;
         
         imageView.userInteractionEnabled = YES;
         
         [imageView addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(openImageScaleInView:)]];
         
-        imageView.tag = imageTag;
-        
-        imageTag ++ ;
+        index ++ ;
         
         [imageContainer addSubview:imageView];
     }
+    
+    imageContainer.frame = CGRectMake(imageContainer.frame.origin.x, imageContainer.frame.origin.y, imageContainer.frame.size.width, (index / 4) * imageCellWidth + imageWidth);
+    
 }
 
 - (void)openImageScaleInView:(UITapGestureRecognizer *)tapGesture
@@ -247,12 +262,14 @@
 - (void)showLastItem:(id)sender
 {
     [ReminderManager setCurrentItemIndex:[ReminderManager getCurrentItemIndex] - 1];
+    selectedItem = [ReminderManager getItemAtIndex:[ReminderManager getCurrentItemIndex]];
     [self refreshCurrentDisplay:nil];
 }
 
 - (void)showNextItem:(id)sender
 {
     [ReminderManager setCurrentItemIndex:[ReminderManager getCurrentItemIndex] + 1];
+    selectedItem = [ReminderManager getItemAtIndex:[ReminderManager getCurrentItemIndex]];
     [self refreshCurrentDisplay:nil];
 }
 
