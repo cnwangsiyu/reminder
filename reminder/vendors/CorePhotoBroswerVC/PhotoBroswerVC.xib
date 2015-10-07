@@ -8,6 +8,7 @@
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="PhotoBroswerVC">
             <connections>
+                <outlet property="deleteButton" destination="d2q-sR-DMR" id="5Xt-gC-FhH"/>
                 <outlet property="scrollView" destination="RLq-hQ-X8E" id="Zjo-9h-zSA"/>
                 <outlet property="scrollViewRightMarginC" destination="Tvg-wG-r5c" id="OXi-IA-O76"/>
                 <outlet property="topBarHeightC" destination="z0u-B8-TAv" id="twn-SD-aHw"/>
@@ -44,7 +45,7 @@
                             <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                             <nil key="highlightedColor"/>
                         </label>
-                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="d2q-sR-DMR" userLabel="SaveButton" customClass="PBSaveBtn">
+                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="d2q-sR-DMR" userLabel="DeleteButton" customClass="PBSaveBtn">
                             <rect key="frame" x="558" y="26" width="32" height="32"/>
                             <animations/>
                             <constraints>

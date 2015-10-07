@@ -21,10 +21,10 @@
     UIScrollView *scrollView;
     EventItem *selectedItem;
     UIView *imageContainer;
+    UIView *buttonContainer;
+    UIButton *leftButton;
+    UIButton * rightButton;
 }
-
-@property (nonatomic, weak) IBOutlet UIButton *leftButton;
-@property (nonatomic, weak) IBOutlet UIButton * rightButton;
 
 @end
 
@@ -46,6 +46,7 @@
 - (void)buildViews:(id)sender
 {
     self.view.backgroundColor = COLOR_AB;
+    
     if (type == reminderViewTypeRemind)
     {
         self.title = @"提醒";
@@ -65,6 +66,7 @@
     titleText.text = selectedItem.title;
     titleText.textAlignment = NSTextAlignmentCenter;
     titleText.backgroundColor = [UIColor clearColor];
+    titleText.font = [UIFont boldSystemFontOfSize:25];
     [scrollView addSubview:titleText];
     
     detailText = [[UITextView alloc] initWithFrame:CGRectMake(10, 80, FULLSCREEN_WIDTH - 20, 200)];
@@ -83,17 +85,37 @@
     [self buildImageView:nil];
     
     [self refreshCurrentDisplay:nil];
+    
+    buttonContainer = [[UIView alloc] initWithFrame:CGRectMake(0, FULLSCREEN_HEIGHT - 50, FULLSCREEN_WIDTH, 50)];
+    buttonContainer.backgroundColor = COLOR_AD;
+    [self.view addSubview:buttonContainer];
+    
+    leftButton = [[UIButton alloc]initWithFrame:CGRectMake(0, 0,FULLSCREEN_WIDTH/2, 50)];
+    [leftButton setTitleColor:[UIColor lightGrayColor] forState:UIControlStateNormal];
+    [buttonContainer addSubview:leftButton];
+    
+    rightButton = [[UIButton alloc]initWithFrame:CGRectMake(FULLSCREEN_WIDTH / 2, 0, FULLSCREEN_WIDTH/2, 50)];
+    [rightButton setTitleColor:[UIColor lightGrayColor] forState:UIControlStateNormal];
+    [buttonContainer addSubview:rightButton];
+    
     if (self.type == reminderViewTypeRemind)
     {
-        [self.leftButton setTitle:@"稍后提醒" forState:UIControlStateNormal];
-        [self.rightButton setTitle:@"我知道啦" forState:UIControlStateNormal];
-        self.leftButton.hidden = NO;
-        self.rightButton.hidden = NO;
+        [leftButton setTitle:@"稍后提醒" forState:UIControlStateNormal];
+        [leftButton addTarget:self action:@selector(remindLater:) forControlEvents:UIControlEventTouchUpInside];
+        
+        [rightButton setTitle:@"我知道啦" forState:UIControlStateNormal];
+        [rightButton addTarget:self action:@selector(iHaveDoneIt:) forControlEvents:UIControlEventTouchUpInside];
+
+        leftButton.hidden = NO;
+        rightButton.hidden = NO;
     }
     else
     {
-        [self.leftButton setTitle:@"上一个" forState:UIControlStateNormal];
-        [self.rightButton setTitle:@"下一个" forState:UIControlStateNormal];
+        [leftButton setTitle:@"上一个" forState:UIControlStateNormal];
+        [leftButton addTarget:self action:@selector(showLastItem:) forControlEvents:UIControlEventTouchUpInside];
+
+        [rightButton setTitle:@"下一个" forState:UIControlStateNormal];
+        [rightButton addTarget:self action:@selector(showNextItem:) forControlEvents:UIControlEventTouchUpInside];
         [self setButtonState];
     }
 }
@@ -111,14 +133,14 @@
 
 - (void)setButtonState
 {
-    self.leftButton.hidden = NO;
-    self.rightButton.hidden = NO;
+    leftButton.hidden = NO;
+    rightButton.hidden = NO;
     
     if ([ReminderManager getCurrentItemIndex] == 0) {
-        self.leftButton.hidden = YES;
+        leftButton.hidden = YES;
     }
     if ([ReminderManager getCurrentItemIndex] == [ReminderManager getTotalItemCount] - 1) {
-        self.rightButton.hidden = YES;
+        rightButton.hidden = YES;
     }
 }
 
@@ -159,7 +181,7 @@
     UIImageView *imageView = (UIImageView *)tapGesture.view;
     
     long index = imageView.tag - IMAGE_TAG;
-    [PhotoBroswerVC show:self type:PhotoBroswerVCTypeZoom index:index photoModelBlock:
+    [PhotoBroswerVC show:self type:PhotoBroswerVCTypeZoom index:index showDeleteButton:NO photoModelBlock:
      ^NSArray *{
          NSArray *localImages = selectedItem.images;
          
@@ -195,47 +217,43 @@
     [self.navigationController pushViewController:editVC animated:YES];
 }
 
-- (IBAction)leftButtonEvent:(id)sender
+- (void)remindLater:(id)sender
 {
-    if (self.type == reminderViewTypeRemind)
-    {
-        [ReminderManager markAsRemindMeLaterAtIndex:[ReminderManager getCurrentItemIndex]];
-        if ([ReminderManager getCurrentItemIndex] + 1 == [ReminderManager getItemsNeedBeenRemindCount]) {
-            [ReminderManager setCurrentItemIndex:0];
-        }
-        else
-        {
-            [ReminderManager setCurrentItemIndex:[ReminderManager getCurrentItemIndex] + 1];
-        }
-        [self refreshCurrentDisplay:nil];
-    }
-    else
-    {
-        [ReminderManager setCurrentItemIndex:[ReminderManager getCurrentItemIndex] - 1];
-        [self refreshCurrentDisplay:nil];
-    }
-}
-
-- (IBAction)rightButtonEvent:(id)sender
-{
-    if (self.type == reminderViewTypeRemind)
-    {
-        [ReminderManager markAsIHaveDoneItAtIndex:[ReminderManager getCurrentItemIndex]];
-        if ([ReminderManager getCurrentItemIndex] + 1 == [ReminderManager getItemsNeedBeenRemindCount])
-        {
-            [ReminderManager setCurrentItemIndex:0];
-        }
-        else
-        {
-            [ReminderManager setCurrentItemIndex:[ReminderManager getCurrentItemIndex] + 1];
-        }
-        [self refreshCurrentDisplay:nil];
+    [ReminderManager markAsRemindMeLaterAtIndex:[ReminderManager getCurrentItemIndex]];
+    if ([ReminderManager getCurrentItemIndex] + 1 == [ReminderManager getItemsNeedBeenRemindCount]) {
+        [ReminderManager setCurrentItemIndex:0];
     }
     else
     {
         [ReminderManager setCurrentItemIndex:[ReminderManager getCurrentItemIndex] + 1];
-        [self refreshCurrentDisplay:nil];
     }
+    [self refreshCurrentDisplay:nil];
+}
+
+- (void)iHaveDoneIt:(id)sender
+{
+    [ReminderManager markAsIHaveDoneItAtIndex:[ReminderManager getCurrentItemIndex]];
+    if ([ReminderManager getCurrentItemIndex] + 1 == [ReminderManager getItemsNeedBeenRemindCount])
+    {
+        [ReminderManager setCurrentItemIndex:0];
+    }
+    else
+    {
+        [ReminderManager setCurrentItemIndex:[ReminderManager getCurrentItemIndex] + 1];
+    }
+    [self refreshCurrentDisplay:nil];
+}
+
+- (void)showLastItem:(id)sender
+{
+    [ReminderManager setCurrentItemIndex:[ReminderManager getCurrentItemIndex] - 1];
+    [self refreshCurrentDisplay:nil];
+}
+
+- (void)showNextItem:(id)sender
+{
+    [ReminderManager setCurrentItemIndex:[ReminderManager getCurrentItemIndex] + 1];
+    [self refreshCurrentDisplay:nil];
 }
 
 @end

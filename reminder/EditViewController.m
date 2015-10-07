@@ -44,6 +44,8 @@
     // Do any additional setup after loading the view from its nib.
     
     [self buildViews:nil];
+    
+    [self registerObservers:nil];
 }
 
 - (void)buildViews:(id)sender
@@ -78,9 +80,10 @@
     titleText = [[UITextField alloc] initWithFrame:CGRectMake(10, 20, FULLSCREEN_WIDTH - 20, 40)];
     titleText.borderStyle = UITextBorderStyleRoundedRect;
     titleText.text = selectedItem.title;
-    titleText.textAlignment = NSTextAlignmentCenter;
+    titleText.textAlignment = NSTextAlignmentLeft;
     titleText.placeholder = @"请输入标题";
     titleText.backgroundColor = [UIColor clearColor];
+    titleText.tintColor = [UIColor blackColor];
     [scrollView addSubview:titleText];
     
     detailText = [[UITextView alloc] initWithFrame:CGRectMake(10, 80, FULLSCREEN_WIDTH - 20, 200)];
@@ -91,10 +94,11 @@
     detailText.layer.masksToBounds = YES;
     detailText.backgroundColor = [UIColor clearColor];
     detailText.font = [UIFont systemFontOfSize:18];
+    detailText.tintColor = titleText.tintColor;
     detailText.delegate = self;
     [scrollView addSubview:detailText];
     
-    UILabel *placeHolder = [[UILabel alloc] initWithFrame:CGRectMake(10, 0, 200, 30)];
+    UILabel *placeHolder = [[UILabel alloc] initWithFrame:CGRectMake(5, 3, 200, 30)];
     placeHolder.textColor = [UIColor lightGrayColor];
     if (detailText.text.length)
     {
@@ -118,6 +122,10 @@
     addImageButton.frame = CGRectMake(10, 0, 60, 60);
     [addImageButton addTarget:self action:@selector(pickImage:) forControlEvents:UIControlEventTouchUpInside];
     addImageButton.tintColor = [UIColor darkGrayColor];
+    addImageButton.layer.borderColor = addImageButton.tintColor.CGColor;
+    addImageButton.layer.borderWidth = 1;
+    addImageButton.layer.cornerRadius = 5;
+    addImageButton.layer.masksToBounds = YES;
     addImageButton.tag = 99999;
     [imageContainer addSubview:addImageButton];
     
@@ -135,6 +143,19 @@
         [deleteButton addTarget:self action:@selector(deleteItem:) forControlEvents:UIControlEventTouchUpInside];
         [scrollView addSubview:deleteButton];
     }
+}
+
+- (void)registerObservers:(id)sender
+{
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(deleteImage:) name:@"deleteImage" object:nil];
+}
+
+- (void)deleteImage:(NSNotification *)noti
+{
+    NSNumber *number = noti.object;
+    NSUInteger index = [number unsignedIntegerValue];
+    [selectedItem.images removeObjectAtIndex:index];
+    [self buildImageView:nil];
 }
 
 - (void)textViewDidChange:(UITextView *)textView
@@ -247,6 +268,11 @@
                                   initWithFrame:CGRectMake(70 * ((imageTag - IMAGE_TAG) % 4) + 10,
                                                            70 * ((imageTag - IMAGE_TAG) / 4),
                                                            60, 60)];
+        imageView.tintColor = [UIColor darkGrayColor];
+        imageView.layer.borderColor = addImageButton.tintColor.CGColor;
+        imageView.layer.borderWidth = 1;
+        imageView.layer.cornerRadius = 5;
+        imageView.layer.masksToBounds = YES;
         
         imageView.image = image;
         
@@ -274,7 +300,7 @@
     UIImageView *imageView = (UIImageView *)tapGesture.view;
     
     long index = imageView.tag - IMAGE_TAG;
-    [PhotoBroswerVC show:self type:PhotoBroswerVCTypeZoom index:index photoModelBlock:
+    [PhotoBroswerVC show:self type:PhotoBroswerVCTypeZoom index:index showDeleteButton:YES photoModelBlock:
      ^NSArray *{
          NSArray *localImages = selectedItem.images;
          

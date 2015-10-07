@@ -17,7 +17,7 @@
 #import "PBScrollView.h"
 #import "CALayer+Transition.h"
 
-
+static BOOL showDelete;
 
 @interface PhotoBroswerVC ()<UIScrollViewDelegate>
 
@@ -46,6 +46,8 @@
 
 
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *scrollViewRightMarginC;
+
+@property (weak, nonatomic) IBOutlet UIButton *deleteButton;
 
 
 
@@ -88,8 +90,8 @@
 @implementation PhotoBroswerVC
 
 
-+(void)show:(UIViewController *)handleVC type:(PhotoBroswerVCType)type index:(NSUInteger)index photoModelBlock:(NSArray *(^)())photoModelBlock{
-    
++(void)show:(UIViewController *)handleVC type:(PhotoBroswerVCType)type index:(NSUInteger)index showDeleteButton:(BOOL)showDeleteButton photoModelBlock:(NSArray *(^)())photoModelBlock{
+    showDelete = showDeleteButton;
     //取出相册数组
     NSArray *photoModels = photoModelBlock();
     
@@ -245,6 +247,8 @@
     [super viewWillAppear:animated];
     
     [self.navigationController setNavigationBarHidden:YES animated:YES];
+    
+    self.deleteButton.hidden = !showDelete;
 }
 
 
@@ -518,43 +522,8 @@
 }
 
 - (IBAction)rightBtnClick:(id)sender {
-    
-    //取出itemView
-    PhotoItemView *itemView = self.currentItemView;
-    
-    //取出对应模型
-    PhotoModel *itemModel = (PhotoModel *)self.photoModels[self.page];
-    
-    if(!itemView.hasImage){
-        [CoreSVP showSVPWithType:CoreSVPTypeError Msg:@"无图片数据" duration:1.0f allowEdit:NO beginBlock:nil completeBlock:nil];
-        return;
-    }
-    
-    //读取缓存
-    if([itemModel read]){//已经保存过本地
-        
-        [CoreSVP showSVPWithType:CoreSVPTypeInfo Msg:@"图片已存" duration:1.0f allowEdit:NO beginBlock:nil completeBlock:nil];
-    }else{
-        
-        //展示提示框
-        [CoreSVP showSVPWithType:CoreSVPTypeLoadingInterface Msg:@"保存中" duration:0 allowEdit:NO beginBlock:nil completeBlock:nil];
-        
-        [itemView save:^{
-            
-            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(.5f * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-                
-                [CoreSVP showSVPWithType:CoreSVPTypeSuccess Msg:@"保存成功" duration:1.0f allowEdit:NO beginBlock:nil completeBlock:nil];
-                
-                //保存记录
-                [itemModel save];
-            });
-            
-            
-        } failBlock:^{
-            
-            [CoreSVP showSVPWithType:CoreSVPTypeError Msg:@"保存失败" duration:1.0f allowEdit:NO beginBlock:nil completeBlock:nil];
-        }];
-    }
+    [self dismiss];
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"deleteImage" object:[NSNumber numberWithUnsignedInteger:self.page]];
 }
 
 
