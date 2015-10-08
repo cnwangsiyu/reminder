@@ -375,11 +375,6 @@
     [self dismissViewControllerAnimated:YES completion:^{}];
 }
 
-- (void)didReceiveMemoryWarning {
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
-}
-
 - (instancetype)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil editViewControllerType:(enum EditViewControllerType)newType
 {
     if (self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil]) {

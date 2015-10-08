@@ -207,7 +207,7 @@ static ReminderViewController *reminder;
     NSString *dirPath = pathInDocumentDirectory(dirName);
     success = removeFileInDirectory(dirPath, [NSString stringWithFormat:@"%lu.png", (unsigned long)index]);
     for (NSUInteger i = index; i < item.images.count; i++) {
-        success = changeFileNameInDirectory(dirPath, [NSString stringWithFormat:@"%lu",i+1], [NSString stringWithFormat:@"%lu",(unsigned long)i]);
+        success = changeFileNameInDirectory(dirPath, [NSString stringWithFormat:@"%u",i+1], [NSString stringWithFormat:@"%lu",(unsigned long)i]);
     }
     return success;
 }
