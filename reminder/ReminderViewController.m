@@ -235,6 +235,9 @@
 - (void)remindLater:(id)sender
 {
     [ReminderManager markAsRemindMeLaterAtIndex:[ReminderManager getCurrentItemIndex]];
+    if ([ReminderManager getItemsNeedBeenRemindCount] == 0) {
+        [self.navigationController popViewControllerAnimated:YES];
+    }
     if ([ReminderManager getCurrentItemIndex] + 1 == [ReminderManager getItemsNeedBeenRemindCount]) {
         [ReminderManager setCurrentItemIndex:0];
     }
@@ -242,6 +245,7 @@
     {
         [ReminderManager setCurrentItemIndex:[ReminderManager getCurrentItemIndex] + 1];
     }
+    selectedItem = [ReminderManager getItemAtIndex:[ReminderManager getCurrentItemIndex]];
     [self refreshCurrentDisplay:nil];
 }
 
@@ -256,6 +260,7 @@
     {
         [ReminderManager setCurrentItemIndex:[ReminderManager getCurrentItemIndex] + 1];
     }
+    selectedItem = [ReminderManager getItemAtIndex:[ReminderManager getCurrentItemIndex]];
     [self refreshCurrentDisplay:nil];
 }
 
