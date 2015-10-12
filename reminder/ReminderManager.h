@@ -9,6 +9,7 @@
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
 #import "ReminderViewController.h"
+#import "EditViewController.h"
 #import "EventItem.h"
 #import "common.h"
 #define FULLSCREEN_WIDTH [UIScreen mainScreen].bounds.size.width
@@ -44,10 +45,12 @@
 
 + (BOOL)saveImageToFile:(UIImage *)image ForItem:(EventItem *)item index:(NSUInteger)index;
 + (BOOL)removeImageInFileForItem:(EventItem *)item index:(NSUInteger)index;
++ (BOOL)saveImageChangesForItem:(EventItem *)item;
++ (BOOL)dismissImageChangesForItem:(EventItem *)item;
 
 + (void)removeEventImagesInFile:(EventItem *)item;
 
-+ (void)setCurrentItemIndex:(NSUInteger)index;
++ (void)setCurrentItemIndex:(NSInteger)index;
 + (NSInteger)getCurrentItemIndex;
 
 NSString* pathInDocumentDirectory(NSString* name);

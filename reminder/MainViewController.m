@@ -125,7 +125,7 @@
 - (void)addItem:(id)sender
 {
     EditViewController *editVC = [[EditViewController alloc] initWithNibName:nil bundle:nil editViewControllerType:EditViewControllerTypeAdd];
-    
+    [ReminderManager setCurrentItemIndex:-1];
     [self presentViewController:editVC animated:YES completion:nil];
 }
 

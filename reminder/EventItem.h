@@ -23,5 +23,6 @@
 - (BOOL) needBeenRemind;
 
 - (instancetype)initWithDictionary:(NSDictionary *)dic;
+- (id)copy;
 
 @end

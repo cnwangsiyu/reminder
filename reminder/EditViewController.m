@@ -26,6 +26,8 @@
     float top;
     float imageWidth;
     enum EditViewControllerType type;
+    //标记防止显示选择照片界面的时候误删除临时文件
+    BOOL isShowImagePicker;
 }
 
 @property (nonatomic, weak) IBOutlet UIButton *saveButton;
@@ -47,6 +49,14 @@
     [self buildViews:nil];
     
     [self registerObservers:nil];
+}
+
+- (void)viewDidDisappear:(BOOL)animated
+{
+    [super viewDidDisappear:animated];
+    if (!isShowImagePicker) {
+        [ReminderManager dismissImageChangesForItem:selectedItem];
+    }
 }
 
 - (void)buildViews:(id)sender
@@ -236,6 +246,7 @@
                 return;
             }
         }
+        isShowImagePicker = YES;
         // 跳转到相机或相册页面
         UIImagePickerController *imagePickerController = [[UIImagePickerController alloc] init];
         
@@ -272,13 +283,16 @@
 #pragma mark - image picker delegte
 - (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info
 {
+    isShowImagePicker = NO;
+    
     [picker dismissViewControllerAnimated:YES completion:^{}];
     
     UIImage *image = [info objectForKey:UIImagePickerControllerOriginalImage];
     
     [selectedItem.images addObject:image];
-    
-    [ReminderManager saveImageToFile:image ForItem:selectedItem index:selectedItem.images.count - 1];
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        [ReminderManager saveImageToFile:image ForItem:selectedItem index:selectedItem.images.count - 1];
+    });
     
     [self buildImageView:nil];
     
@@ -372,6 +386,7 @@
 
 - (void)imagePickerControllerDidCancel:(UIImagePickerController *)picker
 {
+    isShowImagePicker = NO;
     [self dismissViewControllerAnimated:YES completion:^{}];
 }
 
@@ -379,15 +394,10 @@
 {
     if (self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil]) {
         type = newType;
-        if (type == EditViewControllerTypeEdit)
-        {
-            selectedItem = [ReminderManager getItemAtIndex:[ReminderManager getCurrentItemIndex]];
-            if (!selectedItem) {
-                selectedItem = [EventItem new];
-            }
+        if (type == EditViewControllerTypeEdit) {
+            selectedItem = [[ReminderManager getItemAtIndex:[ReminderManager getCurrentItemIndex]] copy];
         }
-        else if (type == EditViewControllerTypeAdd)
-        {
+        if (!selectedItem) {
             selectedItem = [EventItem new];
         }
     }
@@ -400,26 +410,18 @@
     selectedItem.title = titleText.text;
     selectedItem.detail = detailText.text;
     BOOL isInvalid = !selectedItem.title.length && !selectedItem.detail.length && selectedItem.images.count == 0;
-    if (type == EditViewControllerTypeEdit)
+    if (type == EditViewControllerTypeEdit && isInvalid)
     {
-        if (isInvalid) {
-            [ReminderManager removeItemAtIndex:[ReminderManager getCurrentItemIndex]];
-        }
-        else
-        {
-            [ReminderManager setItem:selectedItem AtIndex:[ReminderManager getCurrentItemIndex]];
-        }
+        [ReminderManager removeItemAtIndex:[ReminderManager getCurrentItemIndex]];
     }
-    else
+    else if(!isInvalid)
     {
-        if(!isInvalid)
-        {
-            if (!selectedItem.title.length) {
-                selectedItem.title = @"未命名事项";
-            }
-            [ReminderManager addItem:selectedItem];
+        if (!selectedItem.title.length) {
+            selectedItem.title = @"未命名事项";
         }
+        [ReminderManager setItem:selectedItem AtIndex:[ReminderManager getCurrentItemIndex]];
     }
+    [ReminderManager saveImageChangesForItem:selectedItem];
     
     [[ReminderManager getMainTableView] reloadData];
     [[ReminderManager getReminderViewController] refreshCurrentDisplay:nil];

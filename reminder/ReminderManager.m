@@ -51,6 +51,11 @@ static ReminderViewController *reminder;
     if (itemQueue.count > index) {
         [itemQueue replaceObjectAtIndex:index withObject:newItem];
     }
+    else
+    {
+        [itemQueue addObject:newItem];
+    }
+    [ReminderManager saveUserInfoToDatabase];
 }
 
 + (void)markAsIHaveDoneItAtIndex:(NSUInteger)index
@@ -182,7 +187,7 @@ static ReminderViewController *reminder;
     createDirInDocument(dirName);
     int index = 0;
     for (UIImage *image in item.images) {
-        saveImageToDirectory(pathInDocumentDirectory(dirName), image, [NSString stringWithFormat:@"%d", index], @"png");
+        saveImageToDirectory(pathInDocumentDirectory(dirName), image, [NSString stringWithFormat:@"%d", index], @"jpg");
         index ++;
     }
 }
@@ -195,19 +200,74 @@ static ReminderViewController *reminder;
 
 + (BOOL)saveImageToFile:(UIImage *)image ForItem:(EventItem *)item index:(NSUInteger)index
 {
-    NSString *dirName = [NSString stringWithFormat:@"%f",[item.createTime timeIntervalSince1970]];
+    NSString *originDirPath = pathInDocumentDirectory([NSString stringWithFormat:@"%f",[item.createTime timeIntervalSince1970]]);
+    NSString *tempDirPath = pathInDocumentDirectory([NSString stringWithFormat:@"%ftemp",[item.createTime timeIntervalSince1970]]);
+    BOOL tempIsDir = NO;
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    BOOL tempExisted = [fileManager fileExistsAtPath:tempDirPath isDirectory:&tempIsDir];
     
-    return saveImageToDirectory(pathInDocumentDirectory(dirName), image, [NSString stringWithFormat:@"%lu", (unsigned long)index], @"png");
+    if (!tempExisted || !tempIsDir) {
+        [fileManager copyItemAtPath:originDirPath toPath:tempDirPath error:nil];
+    }
+    for (NSUInteger i = index; i < item.images.count; i++) {
+        changeFileNameInDirectory(tempDirPath, [NSString stringWithFormat:@"%lu.jpg",(unsigned long)i], [NSString stringWithFormat:@"%lu.jpg",(unsigned long)i+1]);
+    }
+    return saveImageToDirectory(tempDirPath, image, [NSString stringWithFormat:@"%lu", (unsigned long)index], @"jpg");
 }
 
 + (BOOL)removeImageInFileForItem:(EventItem *)item index:(NSUInteger)index
 {
-    BOOL success = NO;
-    NSString *dirName = [NSString stringWithFormat:@"%f",[item.createTime timeIntervalSince1970]];
-    NSString *dirPath = pathInDocumentDirectory(dirName);
-    success = removeFileInDirectory(dirPath, [NSString stringWithFormat:@"%lu.png", (unsigned long)index]);
+    BOOL success = YES;
+    NSString *originDirName = [NSString stringWithFormat:@"%f",[item.createTime timeIntervalSince1970]];
+    NSString *originDirPath = pathInDocumentDirectory(originDirName);
+    NSString *tempDirPath = pathInDocumentDirectory([NSString stringWithFormat:@"%ftemp",[item.createTime timeIntervalSince1970]]);
+    BOOL tempIsDir = NO;
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    BOOL tempExisted = [fileManager fileExistsAtPath:tempDirPath isDirectory:&tempIsDir];
+    
+    if (!tempExisted || !tempIsDir) {
+        [fileManager copyItemAtPath:originDirPath toPath:tempDirPath error:nil];
+    }
+    success = removeFileInDirectory(tempDirPath, [NSString stringWithFormat:@"%lu.jpg", (unsigned long)index]);
     for (NSUInteger i = index; i < item.images.count; i++) {
-        success = changeFileNameInDirectory(dirPath, [NSString stringWithFormat:@"%u",i+1], [NSString stringWithFormat:@"%lu",(unsigned long)i]);
+        changeFileNameInDirectory(tempDirPath, [NSString stringWithFormat:@"%lu.jpg",(unsigned long)i+1], [NSString stringWithFormat:@"%lu.jpg",(unsigned long)i]);
+    }
+    return success;
+}
+
++ (BOOL)saveImageChangesForItem:(EventItem *)item
+{
+    BOOL success = YES;
+    NSString *originDirName = [NSString stringWithFormat:@"%f",[item.createTime timeIntervalSince1970]];
+    NSString *originDirPath = pathInDocumentDirectory(originDirName);
+    NSString *tempDirPath = pathInDocumentDirectory([NSString stringWithFormat:@"%ftemp",[item.createTime timeIntervalSince1970]]);
+    BOOL tempIsDir = NO;
+    BOOL originIsDir = NO;
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    BOOL tempExisted = [fileManager fileExistsAtPath:tempDirPath isDirectory:&tempIsDir];
+    BOOL originExisted = [fileManager fileExistsAtPath:originDirPath isDirectory:&originIsDir];
+    if (originIsDir && originExisted && tempExisted && tempIsDir)
+    {
+        success = [fileManager removeItemAtPath:originDirPath error:nil];
+        success = [fileManager moveItemAtPath:tempDirPath toPath:originDirPath error:nil] && success;
+    }
+    else if (tempExisted && tempIsDir)
+    {
+        success = [fileManager moveItemAtPath:tempDirPath toPath:originDirPath error:nil] && success;
+    }
+    return success;
+}
+
++ (BOOL)dismissImageChangesForItem:(EventItem *)item
+{
+    BOOL success = YES;
+    NSString *tempDirPath = pathInDocumentDirectory([NSString stringWithFormat:@"%ftemp",[item.createTime timeIntervalSince1970]]);
+    BOOL tempIsDir = NO;
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    BOOL tempExisted = [fileManager fileExistsAtPath:tempDirPath isDirectory:&tempIsDir];
+    
+    if (tempIsDir && tempExisted) {
+        success = [fileManager removeItemAtPath:tempDirPath error:nil];
     }
     return success;
 }
@@ -232,9 +292,12 @@ static ReminderViewController *reminder;
     return reminder;
 }
 
-+ (void)setCurrentItemIndex:(NSUInteger)index
++ (void)setCurrentItemIndex:(NSInteger)index
 {
     currentIndex = index;
+    if (currentIndex < 0) {
+        currentIndex = itemQueue.count;
+    }
 }
 
 + (NSInteger)getCurrentItemIndex
@@ -297,7 +360,7 @@ bool saveImageToDirectory(NSString *directoryPath, UIImage *image, NSString *ima
     }
     else if ([[imageType lowercaseString] isEqualToString:@"jpg"] || [[imageType lowercaseString] isEqualToString:@"jpeg"])
     {
-        isSaved = [UIImageJPEGRepresentation(image, 1.0) writeToFile:[directoryPath stringByAppendingPathComponent:[NSString stringWithFormat:@"%@.%@", imageName, @"jpg"]] options:NSAtomicWrite error:nil];
+        isSaved = [UIImageJPEGRepresentation(image, 0.3) writeToFile:[directoryPath stringByAppendingPathComponent:[NSString stringWithFormat:@"%@.%@", imageName, @"jpg"]] options:NSAtomicWrite error:nil];
     }
     else
     {
@@ -333,7 +396,6 @@ bool changeFileNameInDirectory(NSString *directoryPath, NSString *oldfileName, N
     
     return [[NSFileManager defaultManager] moveItemAtPath:oldPath toPath:newPath error:nil];
 }
-
 
 // load Image from caches dir to imageview
 UIImage* loadImage(NSString *directoryPath, NSString *imageName)

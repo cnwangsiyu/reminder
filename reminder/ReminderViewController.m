@@ -126,9 +126,9 @@
 
 - (void)refreshCurrentDisplay:(id)sender
 {
-    EventItem *item = [ReminderManager getItemAtIndex:[ReminderManager getCurrentItemIndex]];
-    titleText.text = item.title;
-    detailText.text = item.detail;
+    selectedItem = [ReminderManager getItemAtIndex:[ReminderManager getCurrentItemIndex]];
+    titleText.text = selectedItem.title;
+    detailText.text = selectedItem.detail;
     if (self.type == reminderViewTypeReview) {
         [self setButtonState];
     }

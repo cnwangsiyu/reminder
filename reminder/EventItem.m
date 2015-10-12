@@ -77,7 +77,7 @@
             int index = 0;
             while (!finished)
             {
-                UIImage *image = loadImage(dir, [NSString stringWithFormat:@"%d.png",index]);
+                UIImage *image = loadImage(dir, [NSString stringWithFormat:@"%d.jpg",index]);
                 index ++;
                 if (image) {
                     [self.images addObject:image];
@@ -90,6 +90,18 @@
         }
     }
     return self;
+}
+
+- (id)copy
+{
+    EventItem *newItem = [EventItem new];
+    newItem.title = [self.title copy];
+    newItem.detail = [self.detail copy];
+    newItem.createTime = self.createTime;
+    newItem.lastClickRemindLaterTime = self.lastClickRemindLaterTime;
+    newItem.haveBeenDone = self.haveBeenDone;
+    newItem.images = [[NSMutableArray alloc] initWithArray:self.images];
+    return newItem;
 }
 
 @end
