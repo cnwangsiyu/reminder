@@ -60,8 +60,8 @@
     UIBarButtonItem *editItem = [[UIBarButtonItem alloc] initWithTitle:@"编辑" style:UIBarButtonItemStyleDone target:self action:@selector(edit:)];
     [self.navigationItem setRightBarButtonItem:editItem];
     
-    scrollView = [[UIScrollView alloc] initWithFrame:CGRectMake(0, 0, FULLSCREEN_WIDTH, FULLSCREEN_HEIGHT)];
-    scrollView.contentSize = CGSizeMake(FULLSCREEN_WIDTH, FULLSCREEN_HEIGHT);
+    scrollView = [[UIScrollView alloc] initWithFrame:CGRectMake(0, 0, FULLSCREEN_WIDTH, FULLSCREEN_HEIGHT-50)];
+    scrollView.alwaysBounceVertical = YES;
     [self.view addSubview:scrollView];
     
     titleText = [[UILabel alloc] initWithFrame:CGRectMake(10, 20, FULLSCREEN_WIDTH - 20, 40)];
@@ -188,7 +188,7 @@
     }
     
     imageContainer.frame = CGRectMake(imageContainer.frame.origin.x, imageContainer.frame.origin.y, imageContainer.frame.size.width, (index / 4) * imageCellWidth + imageWidth);
-    
+    scrollView.contentSize = CGSizeMake(FULLSCREEN_WIDTH, imageContainer.frame.origin.y + imageContainer.frame.size.height + 20);
 }
 
 - (void)openImageScaleInView:(UITapGestureRecognizer *)tapGesture

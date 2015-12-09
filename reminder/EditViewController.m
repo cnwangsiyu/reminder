@@ -91,6 +91,7 @@
         scrollView = [[UIScrollView alloc] initWithFrame:CGRectMake(0, 64, FULLSCREEN_WIDTH, FULLSCREEN_HEIGHT - 64)];
         scrollView.userInteractionEnabled = YES;
         [scrollView addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(closeKeyBoard:)]];
+        scrollView.alwaysBounceVertical = YES;
         
         [self.view addSubview:scrollView];
     }
