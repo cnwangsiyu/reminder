@@ -1,0 +1,20 @@
+dependencies: \
+  /Users/WangSiyu/Documents/code/myself/reminder/src/reminder/vendors/CorePhotoBroswerVC/Lib/View/PhotoItemView.m \
+  /Users/WangSiyu/Documents/code/myself/reminder/src/reminder/vendors/CorePhotoBroswerVC/Lib/View/PhotoItemView.h \
+  /Users/WangSiyu/Documents/code/myself/reminder/src/reminder/vendors/CorePhotoBroswerVC/Lib/Model/PhotoModel.h \
+  /Users/WangSiyu/Documents/code/myself/reminder/src/reminder/vendors/CorePhotoBroswerVC/Lib/Type/PhotoBroswerType.h \
+  /Users/WangSiyu/Documents/code/myself/reminder/src/reminder/vendors/CorePhotoBroswerVC/Lib/View/PhotoImageView.h \
+  /Users/WangSiyu/Documents/code/myself/reminder/src/reminder/vendors/CorePhotoBroswerVC/PhotoBroswerVC.h \
+  /Users/WangSiyu/Documents/code/myself/reminder/src/reminder/vendors/FrameWorks/CoreCategory/UIView/UIView+Extend.h \
+  /Users/WangSiyu/Documents/code/myself/reminder/src/reminder/vendors/CorePhotoBroswerVC/Lib/Category/UIView+PBExtend.h \
+  /Users/WangSiyu/Documents/code/myself/reminder/src/reminder/vendors/CorePhotoBroswerVC/Lib/View/PBPGView.h \
+  /Users/WangSiyu/Documents/code/myself/reminder/src/reminder/vendors/CorePhotoBroswerVC/Lib/View/PBBlurImageView.h \
+  /Users/WangSiyu/Documents/code/myself/reminder/src/reminder/vendors/CorePhotoBroswerVC/Lib/Const/PBConst.h \
+  /Users/WangSiyu/Documents/code/myself/reminder/src/reminder/vendors/FrameWorks/CoreCategory/UIImage/UIImage+Extend.h \
+  /Users/WangSiyu/Documents/code/myself/reminder/src/reminder/vendors/FrameWorks/CoreSDWebImage/UIImageView+SD.h \
+  /Users/WangSiyu/Documents/code/myself/reminder/src/reminder/vendors/FrameWorks/CoreSDWebImage/Lib/SDWebImage/SDWebImageDownloader.h \
+  /Users/WangSiyu/Documents/code/myself/reminder/src/reminder/vendors/FrameWorks/CoreSDWebImage/Lib/SDWebImage/SDWebImageCompat.h \
+  /Users/WangSiyu/Documents/code/myself/reminder/src/reminder/vendors/FrameWorks/CoreSDWebImage/Lib/SDWebImage/SDWebImageOperation.h \
+  /Users/WangSiyu/Documents/code/myself/reminder/src/reminder/vendors/FrameWorks/CoreSDWebImage/Lib/SDWebImage/SDWebImageManager.h \
+  /Users/WangSiyu/Documents/code/myself/reminder/src/reminder/vendors/FrameWorks/CoreSDWebImage/Lib/SDWebImage/SDImageCache.h \
+  /Users/WangSiyu/Documents/code/myself/reminder/src/reminder/vendors/FrameWorks/CoreSDWebImage/Lib/Category/UIImage+ReMake.h
