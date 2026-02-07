@@ -74,6 +74,7 @@ static ReminderViewController *reminder;
     if (itemQueue.count > index) {
         EventItem *item = [itemQueue objectAtIndex:index];
         item.lastClickRemindLaterTime = [NSDate date];
+        [ReminderManager saveUserInfoToDatabase];
     }
 }
 

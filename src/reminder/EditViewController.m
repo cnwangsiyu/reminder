@@ -13,12 +13,11 @@
 
 #define IMAGE_TAG 1441
 
-@interface EditViewController ()<UIImagePickerControllerDelegate, UIActionSheetDelegate, UINavigationControllerDelegate, UITextViewDelegate>
+@interface EditViewController ()<UIImagePickerControllerDelegate, UINavigationControllerDelegate, UITextViewDelegate>
 {
     EventItem *selectedItem;
     UIView *imageContainer;
     UIButton *addImageButton;
-    UIActionSheet *sheet;
     UIScrollView *scrollView;
     UITextField *titleText;
     UITextView *detailText;
@@ -45,10 +44,15 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view from its nib.
-    
+
     [self buildViews:nil];
-    
+
     [self registerObservers:nil];
+}
+
+- (void)dealloc
+{
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
 - (void)viewDidDisappear:(BOOL)animated
@@ -59,25 +63,31 @@
     }
 }
 
+- (UIStatusBarStyle)preferredStatusBarStyle
+{
+    return UIStatusBarStyleLightContent;
+}
+
 - (void)buildViews:(id)sender
 {
     {
         self.view.backgroundColor = COLOR_AB;
     }
-    
+
     {
         if (type == EditViewControllerTypeEdit)
         {
             self.title = @"编辑";
             AddModeNavBar.hidden = YES;
-            
+
             UIImageView *saveButtonImage = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"save"]];
             saveButtonImage.frame = CGRectMake(0, 0, 24, 24);
+            saveButtonImage.userInteractionEnabled = YES;
             [saveButtonImage addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(save:)]];
             UIBarButtonItem *saveItem = [[UIBarButtonItem alloc] initWithCustomView:saveButtonImage];
             [self.navigationItem setRightBarButtonItem:saveItem];
-            
-            UIBarButtonItem *resighItem = [[UIBarButtonItem alloc] initWithTitle:@"取消" style:UIBarButtonItemStyleBordered target:self action:@selector(resighed:)];
+
+            UIBarButtonItem *resighItem = [[UIBarButtonItem alloc] initWithTitle:@"取消" style:UIBarButtonItemStylePlain target:self action:@selector(resighed:)];
             [self.navigationItem setLeftBarButtonItem:resighItem];
         }
         else
@@ -86,16 +96,21 @@
             AddModeNavBar.barTintColor = COLOR_AG;
         }
     }
-    
+
     {
-        scrollView = [[UIScrollView alloc] initWithFrame:CGRectMake(0, 64, FULLSCREEN_WIDTH, FULLSCREEN_HEIGHT - 64)];
+        CGFloat topInset = 64;
+        if (@available(iOS 11.0, *)) {
+            UIWindow *window = [UIApplication sharedApplication].windows.firstObject;
+            topInset = window.safeAreaInsets.top + 44;
+        }
+        scrollView = [[UIScrollView alloc] initWithFrame:CGRectMake(0, topInset, FULLSCREEN_WIDTH, FULLSCREEN_HEIGHT - topInset)];
         scrollView.userInteractionEnabled = YES;
         [scrollView addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(closeKeyBoard:)]];
         scrollView.alwaysBounceVertical = YES;
-        
+
         [self.view addSubview:scrollView];
     }
-    
+
     {
         titleText = [[UITextField alloc] initWithFrame:CGRectMake(10, 20, FULLSCREEN_WIDTH - 20, 40)];
         titleText.borderStyle = UITextBorderStyleRoundedRect;
@@ -106,7 +121,7 @@
         titleText.tintColor = [UIColor blackColor];
         [scrollView addSubview:titleText];
     }
-    
+
     {
         detailText = [[UITextView alloc] initWithFrame:CGRectMake(10, 80, FULLSCREEN_WIDTH - 20, 200)];
         detailText.text = selectedItem.detail;
@@ -120,7 +135,7 @@
         detailText.delegate = self;
         [scrollView addSubview:detailText];
     }
-    
+
     {
         UILabel *placeHolder = [[UILabel alloc] initWithFrame:CGRectMake(5, 3, 200, 30)];
         placeHolder.textColor = [UIColor lightGrayColor];
@@ -136,17 +151,17 @@
         placeHolder.tag = 7658;
         [detailText addSubview:placeHolder];
     }
-    
-    
+
+
     CGRect frame = detailText.frame;
     top = frame.origin.y + frame.size.height + 20;
     imageWidth = (frame.size.width - 3*10) / 4;
-    
+
     {
         imageContainer = [[UIView alloc] initWithFrame:CGRectMake(frame.origin.x, top, frame.size.width, imageWidth)];
         imageContainer.backgroundColor = [UIColor clearColor];
         [scrollView addSubview:imageContainer];
-        
+
         addImageButton = [UIButton buttonWithType:UIButtonTypeContactAdd];
         addImageButton.frame = CGRectMake(0, 0, imageWidth, imageWidth);
         [addImageButton addTarget:self action:@selector(pickImage:) forControlEvents:UIControlEventTouchUpInside];
@@ -158,9 +173,9 @@
         addImageButton.tag = 99999;
         [imageContainer addSubview:addImageButton];
         scrollView.contentSize = CGSizeMake(FULLSCREEN_WIDTH, imageContainer.frame.origin.y + addImageButton.frame.origin.y + addImageButton.frame.size.height + 50);
-        
+
     }
-    
+
     {
         if (type == EditViewControllerTypeEdit) {
             deleteButton = [[UIButton alloc] initWithFrame:CGRectMake(frame.origin.x, top + 80, FULLSCREEN_WIDTH - 2*frame.origin.x, 40)];
@@ -210,111 +225,74 @@
     }
 }
 
--(void) actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex
+- (void)showImagePickerWithSourceType:(UIImagePickerControllerSourceType)sourceType
 {
-    if (actionSheet.tag == 255)
-    {
-        
-        NSUInteger sourceType = 0;
-        
-        // 判断是否支持相机
-        if([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera])
-        {
-            
-            switch (buttonIndex)
-            {
-                case 0:
-                    // 相机
-                    sourceType = UIImagePickerControllerSourceTypeCamera;
-                    break;
-                case 1:
-                    // 相册
-                    sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
-                    break;
-                case 2:
-                    // 取消
-                    return;
-            }
-        }
-        else
-        {
-            if (buttonIndex == 0)
-            {
-                sourceType = UIImagePickerControllerSourceTypeSavedPhotosAlbum;
-            }
-            else
-            {
-                return;
-            }
-        }
-        isShowImagePicker = YES;
-        // 跳转到相机或相册页面
-        UIImagePickerController *imagePickerController = [[UIImagePickerController alloc] init];
-        
-        imagePickerController.delegate = self;
-        
-        imagePickerController.allowsEditing = NO;
-        
-        imagePickerController.sourceType = sourceType;
-        
-        [self presentViewController:imagePickerController animated:YES completion:^{}];
-        
-        [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleDefault animated:YES];
-    }
+    isShowImagePicker = YES;
+    UIImagePickerController *imagePickerController = [[UIImagePickerController alloc] init];
+    imagePickerController.delegate = self;
+    imagePickerController.allowsEditing = NO;
+    imagePickerController.sourceType = sourceType;
+    [self presentViewController:imagePickerController animated:YES completion:nil];
 }
 
 - (void)pickImage:(id)sender
 {
-    
+    UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"选择" message:nil preferredStyle:UIAlertControllerStyleActionSheet];
+
     // 判断是否支持相机
     if([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera])
     {
-        sheet  = [[UIActionSheet alloc] initWithTitle:@"选择" delegate:self cancelButtonTitle:@"取消" destructiveButtonTitle:nil otherButtonTitles:@"拍照", @"从相册选择" , nil];
+        [alertController addAction:[UIAlertAction actionWithTitle:@"拍照" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+            [self showImagePickerWithSourceType:UIImagePickerControllerSourceTypeCamera];
+        }]];
+        [alertController addAction:[UIAlertAction actionWithTitle:@"从相册选择" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+            [self showImagePickerWithSourceType:UIImagePickerControllerSourceTypePhotoLibrary];
+        }]];
     }
-    else {
-        
-        sheet = [[UIActionSheet alloc] initWithTitle:@"选择" delegate:self cancelButtonTitle:@"取消" destructiveButtonTitle:nil otherButtonTitles:@"从相册选择", nil];
+    else
+    {
+        [alertController addAction:[UIAlertAction actionWithTitle:@"从相册选择" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+            [self showImagePickerWithSourceType:UIImagePickerControllerSourceTypeSavedPhotosAlbum];
+        }]];
     }
-    
-    sheet.tag = 255;
-    
-    [sheet showInView:self.view];
+
+    [alertController addAction:[UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:nil]];
+
+    [self presentViewController:alertController animated:YES completion:nil];
 }
 
 #pragma mark - image picker delegte
 - (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info
 {
     isShowImagePicker = NO;
-    
+
     [picker dismissViewControllerAnimated:YES completion:^{}];
-    
+
     UIImage *image = [info objectForKey:UIImagePickerControllerOriginalImage];
-    
+
     [selectedItem.images addObject:image];
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         [ReminderManager saveImageToFile:image ForItem:selectedItem index:selectedItem.images.count - 1];
     });
-    
+
     [self buildImageView:nil];
-    
-    [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent animated:YES];
 }
 
 - (void)buildImageView:(id)sender
 {
     int index = 0;
-    
+
     float imageCellWidth = imageWidth + 10;
-    
+
     for (UIView *childView in imageContainer.subviews)
     {
         if (childView.tag != 99999) {
             [childView removeFromSuperview];
         }
     }
-    
+
     for (UIImage *image in selectedItem.images) {
-        
+
         UIImageView *imageView = [[UIImageView alloc]
                                   initWithFrame:CGRectMake(
                                                            imageCellWidth * (index % 4),
@@ -325,29 +303,29 @@
         imageView.layer.borderWidth = 1;
         imageView.layer.cornerRadius = 5;
         imageView.layer.masksToBounds = YES;
-        
+
         imageView.image = image;
-        
+
         imageView.tag = IMAGE_TAG + index;
-        
+
         imageView.userInteractionEnabled = YES;
-        
+
         [imageView addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(openImageScaleInView:)]];
-        
+
         index ++ ;
-        
+
         [imageContainer addSubview:imageView];
     }
-    
+
     imageContainer.frame = CGRectMake(imageContainer.frame.origin.x, imageContainer.frame.origin.y, imageContainer.frame.size.width, (index / 4) * imageCellWidth + imageWidth);
-    
+
     addImageButton.frame =
     CGRectMake(imageCellWidth * (index % 4), imageCellWidth * (index / 4), imageWidth, imageWidth);
-    
+
     if (type == EditViewControllerTypeEdit)
     {
         deleteButton.frame = CGRectMake(deleteButton.frame.origin.x, top + 80 + imageCellWidth * (index / 4), deleteButton.frame.size.width, deleteButton.frame.size.height);
-        
+
         scrollView.contentSize = CGSizeMake(FULLSCREEN_WIDTH, deleteButton.frame.origin.y + deleteButton.frame.size.height + 20);
     }
     else
@@ -359,29 +337,29 @@
 - (void)openImageScaleInView:(UITapGestureRecognizer *)tapGesture
 {
     UIImageView *imageView = (UIImageView *)tapGesture.view;
-    
+
     long index = imageView.tag - IMAGE_TAG;
     [PhotoBroswerVC show:self type:PhotoBroswerVCTypeZoom index:index showDeleteButton:YES photoModelBlock:
      ^NSArray *{
          NSArray *localImages = selectedItem.images;
-         
+
          NSMutableArray *modelsM = [NSMutableArray arrayWithCapacity:localImages.count];
          for (NSUInteger i = 0; i< localImages.count; i++) {
-             
+
              PhotoModel *pbModel=[[PhotoModel alloc] init];
              pbModel.mid = i + 1;
              pbModel.title = selectedItem.title;
              pbModel.desc = selectedItem.detail;
              pbModel.image = localImages[i];
-             
+
              //源frame
              UIImageView *imageV = (UIImageView *)[imageContainer viewWithTag: IMAGE_TAG + i];
              pbModel.sourceImageView = imageV;
              [modelsM addObject:pbModel];
          }
-         
+
          return modelsM;
-         
+
      }];
 }
 
@@ -407,7 +385,7 @@
 
 - (IBAction)save:(id)sender
 {
-    
+
     selectedItem.title = titleText.text;
     selectedItem.detail = detailText.text;
     BOOL isInvalid = !selectedItem.title.length && !selectedItem.detail.length && selectedItem.images.count == 0;
@@ -423,10 +401,10 @@
         [ReminderManager setItem:selectedItem AtIndex:[ReminderManager getCurrentItemIndex]];
     }
     [ReminderManager saveImageChangesForItem:selectedItem];
-    
+
     [[ReminderManager getMainTableView] reloadData];
     [[ReminderManager getReminderViewController] refreshCurrentDisplay:nil];
-    
+
     if (type == EditViewControllerTypeEdit)
     {
         [self.navigationController popViewControllerAnimated:YES];
@@ -435,9 +413,9 @@
     {
         [self dismissViewControllerAnimated:YES completion:nil];
     }
-    
+
     [[NSNotificationCenter defaultCenter] postNotificationName:NT_REFRESH_MAIN object:self];
-    
+
     [self closeKeyBoard:nil];
     self.navigationController.navigationBarHidden = NO;
 }
@@ -462,7 +440,7 @@
     }
     [[ReminderManager getMainTableView] reloadData];
     [[ReminderManager getReminderViewController] refreshCurrentDisplay:nil];
-    
+
     [self.navigationController popToRootViewControllerAnimated:YES];
 }
 

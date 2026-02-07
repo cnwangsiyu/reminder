@@ -45,10 +45,15 @@
     
 }
 
+- (UIStatusBarStyle)preferredStatusBarStyle
+{
+    return UIStatusBarStyleLightContent;
+}
+
 - (void)buildViews:(id)sender
 {
     self.view.backgroundColor = COLOR_AB;
-    
+
     if (type == reminderViewTypeRemind)
     {
         self.title = @"提醒";
@@ -59,25 +64,31 @@
     }
     UIBarButtonItem *editItem = [[UIBarButtonItem alloc] initWithTitle:@"编辑" style:UIBarButtonItemStyleDone target:self action:@selector(edit:)];
     [self.navigationItem setRightBarButtonItem:editItem];
-    
-    scrollView = [[UIScrollView alloc] initWithFrame:CGRectMake(0, 0, FULLSCREEN_WIDTH, FULLSCREEN_HEIGHT-50)];
+
+    CGFloat bottomInset = 0;
+    if (@available(iOS 11.0, *)) {
+        UIWindow *window = [UIApplication sharedApplication].windows.firstObject;
+        bottomInset = window.safeAreaInsets.bottom;
+    }
+
+    scrollView = [[UIScrollView alloc] initWithFrame:CGRectMake(0, 0, FULLSCREEN_WIDTH, FULLSCREEN_HEIGHT - 50 - bottomInset)];
     scrollView.alwaysBounceVertical = YES;
     [self.view addSubview:scrollView];
-    
+
     titleText = [[UILabel alloc] initWithFrame:CGRectMake(10, 20, FULLSCREEN_WIDTH - 20, 40)];
     titleText.text = selectedItem.title;
     titleText.textAlignment = NSTextAlignmentCenter;
     titleText.backgroundColor = [UIColor clearColor];
     titleText.font = [UIFont boldSystemFontOfSize:25];
     [scrollView addSubview:titleText];
-    
+
     detailText = [[UITextView alloc] initWithFrame:CGRectMake(10, 80, FULLSCREEN_WIDTH - 20, 200)];
     detailText.text = selectedItem.detail;
     detailText.backgroundColor = [UIColor clearColor];
     detailText.font = [UIFont systemFontOfSize:18];
     detailText.editable = NO;
     [scrollView addSubview:detailText];
-    
+
     CGRect frame = detailText.frame;
     top = frame.origin.y + frame.size.height + 20;
     imageWidth = (frame.size.width - 3*10) / 4;
@@ -85,12 +96,12 @@
     imageContainer = [[UIView alloc] initWithFrame:CGRectMake(frame.origin.x, top, frame.size.width, 120)];
     imageContainer.backgroundColor = [UIColor clearColor];
     [scrollView addSubview:imageContainer];
-    
+
     [self buildImageView:nil];
-    
+
     [self refreshCurrentDisplay:nil];
-    
-    buttonContainer = [[UIView alloc] initWithFrame:CGRectMake(0, FULLSCREEN_HEIGHT - 50, FULLSCREEN_WIDTH, 50)];
+
+    buttonContainer = [[UIView alloc] initWithFrame:CGRectMake(0, FULLSCREEN_HEIGHT - 50 - bottomInset, FULLSCREEN_WIDTH, 50 + bottomInset)];
     buttonContainer.backgroundColor = COLOR_AD;
     [self.view addSubview:buttonContainer];
     

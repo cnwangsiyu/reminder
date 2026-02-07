@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
-@interface EventItem : NSObject
+@interface EventItem : NSObject<NSCopying>
 
 @property (nonatomic, strong) NSString *title;
 @property (nonatomic, strong) NSString *detail;
@@ -23,6 +23,5 @@
 - (BOOL) needBeenRemind;
 
 - (instancetype)initWithDictionary:(NSDictionary *)dic;
-- (id)copy;
 
 @end

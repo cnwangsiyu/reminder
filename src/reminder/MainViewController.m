@@ -22,6 +22,16 @@
 
 @implementation MainViewController
 
+- (void)dealloc
+{
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+}
+
+- (UIStatusBarStyle)preferredStatusBarStyle
+{
+    return UIStatusBarStyleLightContent;
+}
+
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view from its nib.
@@ -41,21 +51,26 @@
 {
     self.title = @"宝宝该复习啦";
     
-    UIBarButtonItem *settingItem = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"list_setting"] style:UIBarButtonItemStyleBordered target:self action:@selector(setting:)];
+    UIBarButtonItem *settingItem = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"list_setting"] style:UIBarButtonItemStylePlain target:self action:@selector(setting:)];
     [self.navigationItem setLeftBarButtonItem:settingItem];
     
     UIBarButtonItem *composeItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCompose target:self action:@selector(addItem:)];
     [self.navigationItem setRightBarButtonItem:composeItem];
 
     
-    mainTableView = [[UITableView alloc]initWithFrame:CGRectMake(200, 0, FULLSCREEN_WIDTH, FULLSCREEN_HEIGHT)];
+    mainTableView = [[UITableView alloc]initWithFrame:CGRectMake(0, 0, FULLSCREEN_WIDTH, FULLSCREEN_HEIGHT)];
     mainTableView.delegate = self;
     mainTableView.dataSource = self;
     [self.view addSubview:mainTableView];
     [mainTableView registerClass:[UITableViewCell class] forCellReuseIdentifier:@"mainTableViewCellIdentifier"];
     mainTableView.backgroundColor = COLOR_AB;
     
-    seeReminderViewButton = [[UIButton alloc] initWithFrame:CGRectMake(0, FULLSCREEN_HEIGHT - 40, FULLSCREEN_WIDTH, 40)];
+    CGFloat bottomInset = 0;
+    if (@available(iOS 11.0, *)) {
+        UIWindow *window = [UIApplication sharedApplication].windows.firstObject;
+        bottomInset = window.safeAreaInsets.bottom;
+    }
+    seeReminderViewButton = [[UIButton alloc] initWithFrame:CGRectMake(0, FULLSCREEN_HEIGHT - 40 - bottomInset, FULLSCREEN_WIDTH, 40 + bottomInset)];
     seeReminderViewButton.backgroundColor = COLOR_AC;
     [seeReminderViewButton setTitleColor:[UIColor redColor] forState:UIControlStateNormal];
     [seeReminderViewButton
@@ -75,18 +90,26 @@
 
 - (void)refreshRemindCount:(id)sender
 {
+    CGFloat bottomInset = 0;
+    if (@available(iOS 11.0, *)) {
+        UIWindow *window = [UIApplication sharedApplication].windows.firstObject;
+        bottomInset = window.safeAreaInsets.bottom;
+    }
+    CGFloat buttonHeight = 40 + bottomInset;
+
     if ([ReminderManager getItemsNeedBeenRemindCount])
     {
         seeReminderViewButton.hidden = NO;
+        seeReminderViewButton.frame = CGRectMake(0, FULLSCREEN_HEIGHT - buttonHeight, FULLSCREEN_WIDTH, buttonHeight);
         [seeReminderViewButton
          setTitle:[NSString stringWithFormat:@"有%lu个事项需要处理",(unsigned long)[ReminderManager getItemsNeedBeenRemindCount]]
          forState:UIControlStateNormal];
-        mainTableView.frame = CGRectMake(0, 0, FULLSCREEN_WIDTH, FULLSCREEN_HEIGHT - 40);
+        mainTableView.frame = CGRectMake(0, 0, FULLSCREEN_WIDTH, FULLSCREEN_HEIGHT - buttonHeight);
     }
     else
     {
         seeReminderViewButton.hidden = YES;
-        
+
         mainTableView.frame = CGRectMake(0, 0, FULLSCREEN_WIDTH, FULLSCREEN_HEIGHT);
     }
 }

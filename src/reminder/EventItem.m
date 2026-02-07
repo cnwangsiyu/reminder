@@ -92,13 +92,13 @@
     return self;
 }
 
-- (id)copy
+- (id)copyWithZone:(NSZone *)zone
 {
-    EventItem *newItem = [EventItem new];
+    EventItem *newItem = [[EventItem allocWithZone:zone] init];
     newItem.title = [self.title copy];
     newItem.detail = [self.detail copy];
-    newItem.createTime = self.createTime;
-    newItem.lastClickRemindLaterTime = self.lastClickRemindLaterTime;
+    newItem.createTime = [self.createTime copy];
+    newItem.lastClickRemindLaterTime = [self.lastClickRemindLaterTime copy];
     newItem.haveBeenDone = self.haveBeenDone;
     newItem.images = [[NSMutableArray alloc] initWithArray:self.images];
     return newItem;
