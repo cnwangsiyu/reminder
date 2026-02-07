@@ -11,6 +11,7 @@
 @implementation ReminderTableViewCell
 
 - (void)awakeFromNib {
+    [super awakeFromNib];
     // Initialization code
 }
 

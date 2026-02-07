@@ -27,9 +27,16 @@
     navVC.navigationBar.barTintColor = COLOR_AG;
     navVC.navigationBar.tintColor = [UIColor whiteColor];
     navVC.navigationBar.titleTextAttributes = [NSDictionary dictionaryWithObject:[UIColor whiteColor] forKey:NSForegroundColorAttributeName];
+    if (@available(iOS 15.0, *)) {
+        UINavigationBarAppearance *appearance = [[UINavigationBarAppearance alloc] init];
+        [appearance configureWithOpaqueBackground];
+        appearance.backgroundColor = COLOR_AG;
+        appearance.titleTextAttributes = @{NSForegroundColorAttributeName: [UIColor whiteColor]};
+        navVC.navigationBar.standardAppearance = appearance;
+        navVC.navigationBar.scrollEdgeAppearance = appearance;
+    }
     self.window.rootViewController = navVC;
     [self.window makeKeyAndVisible];
-    [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent];
     return YES;
 }
 

@@ -119,9 +119,11 @@
 		B6EA423D1BC2167500E1DAF5 /* red_delete.png in Resources */ = {isa = PBXBuildFile; fileRef = B6EA421F1BC2167500E1DAF5 /* red_delete.png */; };
 		B6EA423E1BC2167500E1DAF5 /* red_delete@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = B6EA42201BC2167500E1DAF5 /* red_delete@2x.png */; };
 		B6EA423F1BC2167500E1DAF5 /* red_delete@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = B6EA42211BC2167500E1DAF5 /* red_delete@3x.png */; };
+		C6A000011BC0000000000001 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C6A000011BC0000000000002 /* LaunchScreen.storyboard */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		C6A000011BC0000000000002 /* LaunchScreen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
 		B620FED01BBFAB7900528177 /* SettingViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SettingViewController.h; sourceTree = "<group>"; };
 		B620FED11BBFAB7900528177 /* SettingViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SettingViewController.m; sourceTree = "<group>"; };
 		B620FED21BBFAB7900528177 /* SettingViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SettingViewController.xib; sourceTree = "<group>"; };
@@ -761,6 +763,7 @@
 				B67F4E021BC529E4003A8014 /* ReminderTableViewCell.h */,
 				B67F4E031BC529E4003A8014 /* ReminderTableViewCell.m */,
 				B66C13BF1BBFCDCB007DE660 /* Images.xcassets */,
+				C6A000011BC0000000000002 /* LaunchScreen.storyboard */,
 				B67438501BBD6B250005DD56 /* Supporting Files */,
 			);
 			path = reminder;
@@ -866,7 +869,7 @@
 				};
 			};
 			buildConfigurationList = B67438481BBD6B250005DD56 /* Build configuration list for PBXProject "reminder" */;
-			compatibilityVersion = "Xcode 6.3";
+			compatibilityVersion = "Xcode 11.0";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -936,6 +939,7 @@
 				B6EA422E1BC2167500E1DAF5 /* list_edit.png in Resources */,
 				B6EA42341BC2167500E1DAF5 /* list_more.png in Resources */,
 				B6EA42331BC2167500E1DAF5 /* list_list@3x.png in Resources */,
+				C6A000011BC0000000000001 /* LaunchScreen.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1052,7 +1056,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
@@ -1090,7 +1094,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -1105,7 +1109,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				DEVELOPMENT_TEAM = 5SLU9L8NS4;
 				INFOPLIST_FILE = reminder/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = wangsiyu.reminder;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -1120,7 +1124,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				DEVELOPMENT_TEAM = 5SLU9L8NS4;
 				INFOPLIST_FILE = reminder/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = wangsiyu.reminder;
 				PRODUCT_NAME = "$(TARGET_NAME)";
